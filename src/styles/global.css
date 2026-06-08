@@ -319,8 +319,19 @@ main.shell {
   white-space: nowrap;
   vertical-align: bottom;
   width: fit-content;
+  /* default (no JS): fully visible, no animation */
   max-width: 21ch;
-  animation: typing 1.7s steps(21, end) 0.5s both;
+}
+
+/* JS active: collapse until fonts load so the typewriter's ch-based width
+   is measured against the real font, not the fallback (avoids clipping the
+   last glyph on a cold mobile load) */
+html.js .hero h1 .typed {
+  max-width: 0;
+}
+
+html.fonts-ready .hero h1 .typed {
+  animation: typing 1.7s steps(21, end) 0.3s both;
 }
 
 @keyframes typing {

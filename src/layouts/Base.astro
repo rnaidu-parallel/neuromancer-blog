@@ -51,6 +51,17 @@ const navItems = [
       // theme init before paint — no FOUC
       const stored = localStorage.getItem('theme');
       if (stored === 'light') document.documentElement.dataset.theme = 'light';
+
+      // gate the hero typewriter on the web font being ready, so the `ch`-based
+      // animation width is measured against Martian Mono and not the fallback —
+      // otherwise the last glyph clips on a cold (uncached) mobile load.
+      const root = document.documentElement;
+      root.classList.add('js');
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => root.classList.add('fonts-ready'));
+      } else {
+        root.classList.add('fonts-ready');
+      }
     </script>
   </head>
   <body>
