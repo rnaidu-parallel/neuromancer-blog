@@ -31,6 +31,16 @@ roughly twenty times cheaper going in and fifty times cheaper coming out. For an
 at any real volume, that is the difference between a feature that pays for itself and one that
 quietly bleeds.
 
+And for an agent, the sticker price isn't even the number that matters most. An agent resends the
+same system prompt, tool definitions, and accumulated context on every turn, so once prompt caching
+is on, the bill is dominated by cached input, not fresh input. That is where the gap is widest: a
+cached input token is about $0.30 per million on Sonnet versus roughly $0.0028 on this open model,
+around 100x, wider than both the fresh-input and the output gaps. It compounds with session length
+too, because the longer the conversation, the bigger the cached prefix you re-read every turn.
+(Sonnet also charges a premium to write the cache; this model does not.) The cached-read rate is
+what a long-running agent should be optimized around, and it is the one number most people never
+check.
+
 And the quality held. For the large majority of calls the open model did the same job. I was not
 trading correctness for price on most of the work, which is exactly why the switch was worth
 making, and why the few rough edges were worth solving instead of running from.
@@ -100,6 +110,17 @@ class of thing.
 
 In other words, the ecosystem already treats this as normal and builds for it. I just needed the
 same thing in my own stack.
+
+## I used to do this by hand
+
+None of this is new, which is the part I find funny. Back on gpt-3.5-turbo and gpt-4, before
+structured output was reliable, I wrote my own parsers. You assumed the output would be a little
+off, so you handled it: pull the JSON out of the prose, fix the quote it got wrong, coerce the
+obvious type. Over time the models got better at following instructions, the APIs and SDKs grew
+real structured-output support, and I quietly stopped. I started trusting the output.
+
+Swapping models is the reminder that the parsing layer never really went away. The coercion layer is
+just that old habit, brought back in a smaller, lighter form.
 
 ## The safety net
 
