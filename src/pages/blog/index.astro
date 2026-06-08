@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Base
+  title="Posts · blackwall"
+  description="Production AI engineering, with evidence: tool-calling reliability, prompt caching, evals, agent memory."
+>
+  <header class="post-header reveal">
+    <h1>Posts</h1>
+    <p class="post-desc">The deep versions. Every claim traceable to a repo.</p>
+  </header>
+
+  <div class="reveal">
+    <PostList posts={posts} />
+  </div>
+</Base>

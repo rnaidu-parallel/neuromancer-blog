@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5);
+---
+
+<Base
+  title="blackwall — Rahul Naidu Siriporam, AI engineer"
+  description="AI engineer. I ship agents to production and publish the evidence — reproducible evals, real failure modes, honest tradeoffs."
+>
+  <section class="hero">
+    <h1 class="reveal"><span class="typed">Rahul Naidu Siriporam</span><span class="cursor" aria-hidden="true"></span></h1>
+    <p class="tagline reveal">
+      AI engineer. I ship agents to production and <strong>publish the evidence</strong>.
+    </p>
+    <p class="hero-aside reveal">// best netrunner in night city</p>
+    <p class="hero-meta reveal">
+      agents · context engineering · rag · tool-calling reliability · evals · prompt caching ·
+      model routing · agent memory
+    </p>
+  </section>
+
+  <h2 class="rule" aria-label="Contact">uplink</h2>
+  <aside class="uplink" id="uplink" role="button" tabindex="0" aria-expanded="false" aria-label="Open contact channel">
+    <span class="uplink-line">
+      $ open_uplink --to rahul<span class="uplink-caret caret-cmd" aria-hidden="true">█</span>
+    </span>
+    <span class="uplink-line uplink-out">
+      <span class="uplink-status">&gt; channel established</span><span
+        class="uplink-caret"
+        aria-hidden="true">█</span
+      >
+    </span>
+    <a class="uplink-addr uplink-out" href="mailto:rahulnaidusiriporam@gmail.com"
+      >rahulnaidusiriporam@gmail.com</a
+    >
+  </aside>
+
+  <h2 class="rule" aria-label="Latest posts">latest</h2>
+  <PostList posts={posts} />
+
+  <script is:inline>
+    const uplink = document.getElementById('uplink');
+    const openUplink = () => {
+      uplink.classList.add('open');
+      uplink.setAttribute('aria-expanded', 'true');
+    };
+    uplink?.addEventListener('click', openUplink);
+    uplink?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') openUplink();
+    });
+  </script>
+</Base>

@@ -1,0 +1,34 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+---
+
+{
+  posts.length === 0 ? (
+    <p class="empty-state">
+      <span class="prompt">$</span> first post compiling… check back soon.
+    </p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <time class="post-date" datetime={post.data.pubDate.toISOString()}>
+            {fmt(post.data.pubDate)}
+          </time>
+          <a class="post-title" href={`/blog/${post.id}/`}>
+            {post.data.title}
+          </a>
+          <p class="post-desc">{post.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  )
+}

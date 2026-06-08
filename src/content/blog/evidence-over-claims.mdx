@@ -1,0 +1,45 @@
+---
+title: "Evidence over claims"
+description: "What this site is for, and the plan."
+pubDate: 2026-06-07
+tags: ["meta", "ai-engineering"]
+---
+
+There are a thousand "intro to RAG" posts on the internet. This isn't one of them.
+
+I build LLM systems that run in production. Agent loops, tool-calling pipelines, eval
+harnesses, prompt-cache machinery. Production teaches you things documentation never
+will: the tool schema that silently breaks one specific family of models, the
+timestamp that quietly zeroes your cache hit rate, the memory architecture that works
+precisely *because* it refuses to retrieve.
+
+Most of that knowledge evaporates. An engineer hits the bug, fixes it, moves on. The
+fix lives out its days in a commit message nobody reads.
+
+I want to write mine down. Here's the plan.
+
+## The rules
+
+Three rules for every substantial post.
+
+**One claim per post.** Specific enough to be wrong. "A `.nullable()` field in a tool
+schema makes some models truncate the call mid-stream" is a claim. "Thoughts on
+structured output" is a shrug.
+
+**A repo reproduces it.** Clone it, add your API keys, run it. You should get the
+number I published, within a stated tolerance. Model IDs and run dates are pinned,
+because models change silently and a claim without a date is marketing.
+
+**The tradeoff stays in.** Every real fix costs something. If a post has no tradeoff
+section, I haven't understood the problem yet.
+
+And one meta-rule. When an eval contradicts what I expected, the post says so: I
+expected X, I measured Y. That version is usually more useful anyway.
+
+## What's coming
+
+The first concept is already in the harness: structured tool calls on Chinese
+open-source models. The short version: they fail in repeatable ways, every major agent
+stack quietly ships a coercion layer to patch around it, and nobody has published a
+head-to-head showing which schema features break which models. I'm building that eval.
+Prompt caching and agent memory are next in line.

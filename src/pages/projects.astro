@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Each card = one public concept repo. Cards link to the repo once it's
+// public; until then they render as non-links. New entries land here the
+// day the repo goes live.
+const projects = [
+  {
+    title: 'coercion-by-default',
+    desc: 'Chinese open-source models fail structured tool calls in repeatable ways, and every major agent stack quietly ships a coercion layer to patch around it. This repo measures which schema features break which models, and what the silent patches miss.',
+    href: null,
+  },
+];
+---
+
+<Base
+  title="Projects · blackwall"
+  description="Public concept repos: production LLM lessons, each backed by a reproducible eval."
+  wide
+>
+  <header class="post-header reveal">
+    <h1>Projects</h1>
+    <p class="post-desc">What I'm building in public.</p>
+  </header>
+
+  <div class="card-grid reveal">
+    {
+      projects.map((p) =>
+        p.href ? (
+          <a class="card" href={p.href}>
+            <h3>{p.title}</h3>
+            <p>{p.desc}</p>
+          </a>
+        ) : (
+          <div class="card">
+            <h3>{p.title}</h3>
+            <p>{p.desc}</p>
+          </div>
+        )
+      )
+    }
+  </div>
+</Base>
