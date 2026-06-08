@@ -6,9 +6,9 @@ import Base from '../layouts/Base.astro';
 // day the repo goes live.
 const projects = [
   {
-    title: 'coercion-by-default',
-    desc: 'Chinese open-source models fail structured tool calls in repeatable ways, and every major agent stack quietly ships a coercion layer to patch around it. This repo measures which schema features break which models, and what the silent patches miss.',
-    href: null,
+    title: 'agent-coercion-layer',
+    desc: 'Swap models in a production agent and their output shapes differ: one fences its JSON, one truncates a tool call at a nullable field. This repo measures what differs across models, and ships a transparent coercion layer that absorbs it.',
+    href: 'https://github.com/rnaidu-parallel/agent-coercion-layer',
   },
 ];
 ---
