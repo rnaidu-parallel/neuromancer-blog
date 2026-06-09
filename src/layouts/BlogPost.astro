@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, updatedDate, tags, repo } = post.data;
+const { title, description, pubDate, updatedDate, tags, repo, demo } = post.data;
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -32,10 +32,19 @@ const fmt = (d: Date) =>
         )
       }
       {
-        repo && (
-          <a class="repo-callout" href={repo}>
-            ▸ reproduce it yourself — the repo
-          </a>
+        (demo || repo) && (
+          <div class="callouts">
+            {demo && (
+              <a class="demo-callout" href={demo}>
+                ▸ play with it — the live demo
+              </a>
+            )}
+            {repo && (
+              <a class="repo-callout" href={repo}>
+                ▸ reproduce it yourself — the repo
+              </a>
+            )}
+          </div>
         )
       }
     </header>

@@ -655,6 +655,19 @@ html.fonts-ready .hero h1 .typed {
   border-radius: 4px;
 }
 
+.prose figure {
+  margin: 2.25rem 0;
+}
+
+.prose figcaption {
+  margin-top: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+  text-align: center;
+}
+
 .prose hr {
   border: none;
   border-top: 1px solid var(--border);
@@ -706,7 +719,16 @@ html.fonts-ready .hero h1 .typed {
   padding: 0.15rem 0.5rem;
 }
 
-.repo-callout {
+.callouts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.repo-callout,
+.demo-callout {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -717,11 +739,11 @@ html.fonts-ready .hero h1 .typed {
   border-radius: 3px;
   padding: 0.45rem 0.8rem;
   text-decoration: none;
-  margin-top: 1.25rem;
   transition: box-shadow 0.2s ease;
 }
 
-.repo-callout:hover {
+.repo-callout:hover,
+.demo-callout:hover {
   box-shadow: 0 0 16px var(--accent-soft);
 }
 

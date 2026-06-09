@@ -1,0 +1,212 @@
+---
+title: "The prompt caching mistake that costs more than no caching at all"
+description: "A changing timestamp in your prompt prefix gives you a 0% cache hit on OpenAI, so you just save nothing. On Anthropic the same line makes your bill 25% higher than if you had never cached. Measured, with a reproducible benchmark you can play with."
+pubDate: 2026-06-09
+tags: ["ai-engineering", "prompt-caching", "kv-cache", "openrouter", "cost", "evals"]
+draft: false
+repo: https://github.com/rnaidu-parallel/prompt-cache-economics
+demo: https://cache.neuromancer.in
+---
+
+Here is a line that looks completely harmless at the top of a system prompt:
+
+```
+Current time: 2026-06-09 14:08 UTC
+```
+
+It is one short line in a prompt that might be five thousand tokens long. It feels like rounding
+error. It is not. On a cache-friendly agent that single line can be the difference between paying
+for about a tenth of your input and paying for all of it, turn after turn. And on one of the two
+providers I tested, leaving it there does something worse than waste the discount: it makes caching
+cost you more than if you had never turned it on.
+
+I wanted real numbers for this, not hand-waving, so I built a small benchmark and ran it. The short
+version: where you put the things that change decides your prompt-cache bill, and the penalty for
+getting it wrong is not the same across providers. Let me show you what is actually happening, and
+then you can play with the live numbers at the bottom.
+
+## What prompt caching actually caches
+
+To understand the footgun you have to know what is being cached, and it is not "the text of your
+prompt" in any literal sense. It is the model's intermediate work on that text.
+
+When a model reads your prompt, it runs a phase called prefill. It pushes the whole prompt through
+the network in one pass and, for every token, computes a pair of vectors called the key and the
+value at every layer. Those key and value vectors are what attention reads from when it generates
+the next token. The collection of them is the KV cache. Prefill is the expensive part of serving a
+long prompt, because it is compute-bound: the GPU is doing dense matrix math across your entire
+input, and the attention work climbs quickly as the input gets longer. Generating the output
+afterwards is a different shape of work, one token at a time, limited by memory bandwidth rather
+than raw compute.
+
+Prompt caching is the provider keeping that precomputed state for a prefix of your prompt so that
+the next request with the same prefix can skip prefill for those tokens. The official docs stay out
+of the internals, OpenAI and Anthropic both describe it simply as resuming from a cached prefix, but
+the prefix state they reuse is exactly this KV cache. Either way the billing follows the same logic:
+you are not paying to recompute attention over five thousand tokens again, you are paying to fetch
+state that already exists, which is why a cached input token costs roughly a tenth of a normal one.
+You are buying a memory read instead of a recomputation.
+
+Now the important part, the part that makes the timestamp matter. Attention is causal, so the key
+and value vectors for a token depend on every token before it. Change one token near the start and
+every vector after it is different. The cache is matched as a prefix from the very beginning, and on
+today's systems that match has to be identical, block for block, up to the point where it diverges.
+So a single changed token early in the prompt does not invalidate "a bit" of the cache. It
+invalidates everything from that point on. In the naive runs below, the prompt is almost entirely
+identical from turn to turn and the cache still does nothing, because the part that moved is at the
+top.
+
+A timestamp at the top of a system prompt is exactly that: one small thing that changes on every
+request, sitting in front of everything that does not.
+
+<figure>
+  <img
+    src="/images/prompt-caching-openai.png"
+    alt="An original prompt drawn as a grid of shapes. When the prefix is identical the request is a cache hit, shown all green. When the very first shape changes, it is a cache miss, shown in grey with the changed shape in orange."
+    loading="lazy"
+  />
+  <figcaption>
+    OpenAI's own picture of the same idea: an identical prefix is a cache hit (green), but change the
+    very first element and it is a miss (orange), greying out everything after it. Source:
+    <a href="https://developers.openai.com/api/docs/guides/prompt-caching">OpenAI, Prompt caching</a>.
+  </figcaption>
+</figure>
+
+## The test
+
+I needed a workload with the shape that caching is supposed to reward: a big, stable prompt and a
+small, changing payload each turn. A dungeon master for a text adventure is perfect. The system
+prompt is a few thousand tokens of fixed world rules, tone, and lore that never change. Each turn
+the only genuinely new things are the player's action and the in-world time.
+
+I ran the same six-turn session two ways, changing one thing only: where the timestamp goes.
+
+- **Naive**: the changing timestamp sits at the top of the system prompt, above the stable lore.
+- **Disciplined**: the system prompt is the stable lore and nothing else, and the timestamp rides
+  in a small wrapper on the latest user message, at the very end.
+
+Same information, same task. The only variable is placement. Everything ran through OpenRouter so I
+could read the real billed cost and the cached-token counts straight from the response, with
+reasoning turned off so it would not muddy the token counts. Models and prices are pinned to the run
+date, 2026-06-09: OpenAI `gpt-5.4` and Anthropic `claude-sonnet-4.6`. I tried Gemini too, but its
+implicit caching did not surface measurable cache hits through OpenRouter, so I left it out rather
+than publish a number I could not reproduce.
+
+The concrete shape, so you can judge it: the system prompt is about 5,000 tokens of fixed rules and
+lore on OpenAI's tokenizer, around 6,300 on Anthropic's denser one. The only thing that changes each
+turn is the player's action and the timestamp, together roughly thirty to sixty tokens. Because the
+whole conversation is re-sent every turn, a six-turn run ships about 33,000 input tokens on OpenAI
+and 40,000 on Anthropic. This is one workload on two models, not a universal constant. The exact
+percentages move with prompt size, model, provider, and pricing. The direction does not.
+
+## The results
+
+<div class="result-table">
+
+| | Timestamp in the prefix (naive) | Timestamp in the tail (disciplined) |
+|---|---|---|
+| **OpenAI gpt-5.4** | **+0%** vs no caching. 0% cache hit, you save nothing | **−82%** input cost, ~92% of input served from cache |
+| **Anthropic claude-sonnet-4.6** | **+25%** vs no caching. You pay more than if you never cached | **−68%** input cost, ~81% from cache |
+
+</div>
+
+Every percentage is against the same run with caching off, the no-cache baseline. So −82% means the
+disciplined run paid 82% less on input than sending those identical prompts with no caching, and +25%
+on Anthropic means naive caching cost a quarter more than not caching at all.
+
+Read the naive column twice, because the two cells are not the same kind of bad.
+
+On OpenAI, naive caching is a non-event. Caching is automatic, there is no extra fee to write to
+the cache, so the worst that happens is you never get a hit. You pay full price, exactly what you
+would have paid with no caching at all. The discount is sitting right there and you are walking
+past it. Annoying, but free.
+
+On Anthropic, naive caching is a tax. This is the part people miss. Anthropic caching is something
+you opt into, and writing to the cache is not free: at the time of this run a cache write cost 1.25
+times a normal input token (the short five-minute cache; the one-hour cache is 2x). The deal is that
+you pay a small premium once to store the prefix, then read it back at a tenth of the price many
+times, and you come out ahead after the very first read. But if your prefix
+changes every turn, you never get the read. You pay the write premium, throw the entry away, and
+write a fresh one next turn. Over my six turns that worked out to about 25% more than if I had left
+caching off entirely. You turned on the feature that is supposed to save money and it charged you
+for the privilege of wasting it. If you go looking for this in your own bill, watch the cache-write
+count and not just the reads, because that is the field it hides in.
+
+The disciplined column is the happy ending, and it is the same move on both providers: pull the
+timestamp out of the prefix. Suddenly the entire system prompt is byte-for-byte identical across
+turns, the cache hits on every turn after the first, and input cost falls off a cliff. The first
+turn still pays full freight because the cache is cold, then it is mostly reads from there. Same
+task, same information in front of the model, a fraction of the bill.
+
+## How to not do this
+
+The fix is a habit, not a library. Order your prompt from least likely to change to most likely to
+change, and never let anything volatile sit above something stable.
+
+In many agent setups that falls out naturally from how the request is assembled: tools, then the
+system prompt, then messages, which is already roughly stable to volatile. Keep the per-request content at the
+very end. A timestamp, a request id, a per-user greeting, a freshly retrieved document: all of it
+goes after the stable block, ideally on the last user message. If you genuinely need the current time
+in the model's view, put it in the last message, not the system prompt. The model still sees it. The
+cache still holds.
+
+Retrieval is the trap worth calling out, because it is so common. A lot of RAG setups paste freshly
+retrieved passages in near the top, ahead of the stable instructions. If those passages change every
+request, and they usually do, they break the cache for everything below them in exactly the same way
+the timestamp does. Put retrieved context after the stable block, not in front of it.
+
+Two more things from the provider docs are worth keeping in mind. Caching only engages above a
+minimum prompt size, 1,024 tokens on the models I used here, so very short prompts never cache no
+matter how you order them. And the timestamp is not the only way to break a prefix: changing your
+tool definitions, toggling a tool on or off, or adding an image earlier in the prompt invalidates
+the cache the same way, and on Anthropic even reordering the keys in your tool JSON can do it, which
+has caught out people whose language serializes JSON in random key order. The rule underneath all of
+these is the same. Anything that changes the bytes of the prefix throws away the cache below it.
+
+A useful way to think about it: your prompt has regions with different lifetimes. The persona and
+rules live for the life of the deployment. Per-conversation context lives for the session. The
+current turn lives for one request. Stack them in that order and the cache boundary falls in the
+right place on its own.
+
+## Play with it
+
+This is the part worth your two minutes. Below is the recorded run, replayed. Flip the timestamp
+between the prefix and the tail, switch providers, and step through the session while the bill
+updates. Watch the prompt stack go red when the prefix is poisoned and green when it caches, and
+watch the Anthropic naive bill climb above the no-cache line. It also runs full screen at
+[cache.neuromancer.in](https://cache.neuromancer.in).
+
+<iframe
+  src="https://cache.neuromancer.in"
+  title="Interactive prompt-cache benchmark"
+  loading="lazy"
+  style="width:100%;aspect-ratio:4/3;border:1px solid var(--hairline, #23232a);background:#0a0a0c;margin:1.5rem 0;"
+></iframe>
+
+## Takeaway
+
+Prompt caching is one of the cleanest wins in production LLM work. It can take eighty to ninety
+percent off your input bill for the kind of agent that re-sends a big stable prompt every turn, and
+that is most agents. But the win is conditional on one discipline: keep the things that change out
+of the part you want cached. Get it right and you barely think about it again. Get it wrong on a
+provider that charges to write the cache, and you are paying extra for a feature you believe is
+saving you money.
+
+Look at where the moving parts of your prompt are. If a timestamp, an id, or a freshly fetched
+chunk is sitting up top, move it down. Then check your cache-read and cache-write counts and confirm
+the reads are happening. The discount is generous. You just have to stop standing in front of it.
+
+## Going deeper
+
+The two official guides are worth reading in full for the exact rules on your models, and they are
+where I checked the pricing multipliers, the minimum sizes, and the prefix-matching behavior used
+above:
+
+- [OpenAI: Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching)
+- [Anthropic: Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
+
+---
+
+The benchmark and the interactive replay live in one small repo:
+[github.com/rnaidu-parallel/prompt-cache-economics](https://github.com/rnaidu-parallel/prompt-cache-economics).
+Clone it, add an OpenRouter key, and run the same session against your own models.
