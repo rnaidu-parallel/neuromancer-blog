@@ -28,7 +28,7 @@ I started with Qwen3 8B, which I had picked as a strong 8B for tool calling. It 
 
 Hermes does give you an escape hatch, and it is worth understanding because the wrong use of it is a trap. If you know a model genuinely supports a larger window than it advertises, you can set `model.context_length` in the config to override the detected value. That is the legitimate case. The illegitimate one is tempting: claim 64k on a model that truly tops out lower. Hermes stops complaining, then silently truncates its own skills and tool schemas to fit the real window, and the agent starts behaving unpredictably for reasons you can no longer see. A loud failure at startup beats a silent one at runtime, so I did not force it.
 
-That left me looking for a small model with a genuinely large native context, which is what pushed me toward a 4B. The general lesson is that an agent framework is a filter. Plenty of small models either fall under the context floor or need a fine-tuned variant to tool-call reliably through Ollama's stock build, and both of those cut the list down before you ever get to argue about which model is smarter.
+So the 4B was forced by two things at once: the 6GB budget, where an 8B's weights leave no room for a KV cache, and the context floor the 8B could not clear either. I needed a model small enough to leave VRAM for a cache and with a native context well past 64k. The general lesson is that an agent framework is a filter. Plenty of small models either fall under the context floor or need a fine-tuned variant to tool-call reliably through Ollama's stock build, and both of those cut the list down before you ever get to argue about which model is smarter.
 
 ## 2. On a small GPU, the KV cache is the bottleneck, not the parameter count
 
