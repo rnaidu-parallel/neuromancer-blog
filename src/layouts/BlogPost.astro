@@ -7,13 +7,13 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, updatedDate, tags, repo, demo } = post.data;
+const { title, description, pubDate, updatedDate, tags, repo, demo, image } = post.data;
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<Base title={`${title} · blackwall`} description={description} type="article">
+<Base title={`${title} · blackwall`} description={description} type="article" image={image}>
   <article>
     <header class="post-header reveal">
       <time class="post-date" datetime={pubDate.toISOString()}>

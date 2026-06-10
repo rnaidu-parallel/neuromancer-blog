@@ -12,6 +12,8 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     repo: z.string().url().optional(),
     demo: z.string().url().optional(),
+    /** social-share card; site-root path or absolute URL. Falls back to og-default.png. */
+    image: z.string().optional(),
   }),
 });
 
