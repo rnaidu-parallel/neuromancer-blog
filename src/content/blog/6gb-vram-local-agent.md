@@ -151,4 +151,6 @@ An eight year old laptop. 6GB of VRAM. A 4B model. Zero dollars per token, and n
 
 None of those came from picking a better model off a leaderboard. They came from finding where the tokens were going and refusing to pay for the ones I did not need. The benchmark question, which model is best, was the wrong question for this hardware. The right one was where my budget actually goes, and on a 6GB card the honest answer is the prompt and the cache, long before it ever reaches the weights.
 
+And the cuts did not gut it. The quantized 4B still holds up for the job I give it: a dispatcher that routes the real work to stronger agents, on the laptop or my Mac across the network. It does not need to be brilliant, the brilliance is delegated.
+
 If you have an old gaming laptop in a drawer, it is probably enough. You just have to know where the tokens go.
