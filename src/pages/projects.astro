@@ -6,6 +6,11 @@ import Base from '../layouts/Base.astro';
 // day the repo goes live.
 const projects = [
   {
+    title: 'hermes-local-agent',
+    desc: 'A personal AI agent running entirely on a 2018 gaming laptop with 6GB of VRAM: Hermes + Ollama + qwen3.5, driven from Telegram. Five measured budget constraints decide a local agent stack, and the KV cache, not parameter count, is the real bottleneck. Blog-only build, every number measured on the laptop.',
+    href: 'https://blog.neuromancer.in/blog/6gb-vram-local-agent/',
+  },
+  {
     title: 'prompt-cache-economics',
     desc: 'A timestamp at the top of your prompt is a 0% cache hit on OpenAI, and on Anthropic it costs more than not caching at all. This repo measures prompt-cache economics across providers, with a recorded benchmark and an interactive replay you can step through.',
     href: 'https://github.com/rnaidu-parallel/prompt-cache-economics',
