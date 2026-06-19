@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import BlackwallHero from '../components/BlackwallHero.astro';
 
 interface Props {
   title: string;
@@ -73,6 +74,7 @@ const navItems = [
     </script>
   </head>
   <body>
+    <BlackwallHero />
     <div class="crt" aria-hidden="true"></div>
     <header class="site-header">
       <div class="shell">
@@ -98,6 +100,7 @@ const navItems = [
     </header>
 
     <main class:list={['shell', { 'shell--wide': wide }]}>
+      <span class="page-spine" aria-hidden="true"></span>
       <slot />
     </main>
 

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
+import Scriptorium from '../components/Scriptorium.astro';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -13,16 +14,20 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
   description="AI engineer. I ship agents to production and publish the evidence — reproducible evals, real failure modes, honest tradeoffs."
 >
   <section class="hero">
-    <h1 class="reveal"><span class="typed">Rahul Naidu Siriporam</span><span class="cursor" aria-hidden="true"></span></h1>
-    <p class="tagline reveal">
-      AI engineer. I ship agents to production and <strong>publish the evidence</strong>.
-    </p>
-    <p class="hero-aside reveal">// just another night runner wandering the streets of night city</p>
-    <p class="hero-meta reveal">
-      agents · context engineering · rag · tool-calling reliability · evals · prompt caching ·
-      model routing · agent memory
-    </p>
+    <div class="hero__body">
+      <h1 class="reveal"><span class="typed">Rahul Naidu Siriporam</span><span class="cursor" aria-hidden="true"></span></h1>
+      <p class="tagline reveal">
+        AI engineer. I ship agents to production and <strong>publish the evidence</strong>.
+      </p>
+      <p class="hero-aside reveal">// just another night runner wandering the streets of night city</p>
+      <p class="hero-meta reveal">
+        agents · context engineering · rag · tool-calling reliability · evals · prompt caching ·
+        model routing · agent memory
+      </p>
+    </div>
   </section>
+
+  <Scriptorium />
 
   <h2 class="rule" aria-label="Contact">uplink</h2>
   <aside class="uplink" id="uplink" role="button" tabindex="0" aria-expanded="false" aria-label="Open contact channel">
@@ -44,10 +49,29 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
   <PostList posts={posts} />
 
   <script is:inline>
+    // erupt the Blackwall background from an element's centre
+    const fireBurst = (el) => {
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      window.dispatchEvent(
+        new CustomEvent('blackwall:burst', {
+          detail: {
+            x: (r.left + r.width / 2) / window.innerWidth,
+            y: 1 - (r.top + r.height / 2) / window.innerHeight,
+          },
+        })
+      );
+    };
+
+    // the moment the name finishes typing -> dramatic burst from the name
+    const typed = document.querySelector('.hero h1 .typed');
+    typed?.addEventListener('animationend', () => fireBurst(typed));
+
     const uplink = document.getElementById('uplink');
     const openUplink = () => {
       uplink.classList.add('open');
       uplink.setAttribute('aria-expanded', 'true');
+      fireBurst(uplink);
     };
     uplink?.addEventListener('click', openUplink);
     uplink?.addEventListener('keydown', (e) => {
