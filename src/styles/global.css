@@ -998,6 +998,100 @@ html.fonts-ready .hero h1 .typed {
   }
 }
 
+/* ---------- mcp: agent access card ---------- */
+
+.mcp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-raised);
+}
+
+.mcp-intro {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.mcp-intro abbr {
+  color: var(--text-bright);
+  text-decoration: underline dotted;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+  cursor: help;
+}
+
+.mcp-cmd {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.mcp-code {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text-bright);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.6rem 0.7rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  user-select: all;
+}
+
+.mcp-copy {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mcp-copy:hover,
+.mcp-copy:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 14px var(--accent-soft);
+}
+
+.mcp-copy.copied {
+  color: var(--text-bright);
+  border-color: var(--accent);
+}
+
+.mcp-hint {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+@media (max-width: 480px) {
+  .mcp-cmd {
+    flex-direction: column;
+  }
+  .mcp-code {
+    font-size: 0.66rem;
+  }
+  .mcp-copy {
+    padding: 0.5rem 0;
+  }
+}
+
 /* ---------- reaction dynamics ----------
    text answers back on interaction — glow on links, a brighter glow as a
    post row lights up, and a faint signal flicker on the contact uplink */

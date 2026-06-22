@@ -27,6 +27,21 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </section>
 
+  <h2 class="rule" aria-label="Connect via agent">agent access</h2>
+  <aside class="mcp">
+    <p class="mcp-intro">
+      I publish myself as an <abbr title="Model Context Protocol">MCP</abbr> server. Add it to your
+      agent and it can read my work, weigh a role, and reach out.
+    </p>
+    <div class="mcp-cmd">
+      <code class="mcp-code" id="mcp-cmd"
+        >claude mcp add --transport http rahul https://mcp.neuromancer.in/api/mcp</code
+      >
+      <button type="button" class="mcp-copy" data-copy-cmd aria-label="Copy command">copy</button>
+    </div>
+    <p class="mcp-hint">&gt; then ask: “is this person a fit for &lt;role&gt;? if so, reach out.”</p>
+  </aside>
+
   <Scriptorium />
 
   <h2 class="rule" aria-label="Contact">uplink</h2>
@@ -76,6 +91,24 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     uplink?.addEventListener('click', openUplink);
     uplink?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') openUplink();
+    });
+
+    // copy the MCP install command, with a burst from the button
+    const copyBtn = document.querySelector('[data-copy-cmd]');
+    const cmd = document.getElementById('mcp-cmd');
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText((cmd.textContent || '').trim());
+        copyBtn.textContent = 'copied';
+        copyBtn.classList.add('copied');
+        fireBurst(copyBtn);
+        setTimeout(() => {
+          copyBtn.textContent = 'copy';
+          copyBtn.classList.remove('copied');
+        }, 1400);
+      } catch (err) {
+        /* clipboard blocked; the command is selectable as a fallback */
+      }
     });
   </script>
 </Base>
