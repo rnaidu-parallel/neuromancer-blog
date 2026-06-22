@@ -1125,14 +1125,10 @@ html.fonts-ready .hero h1 .typed {
 }
 
 @media (max-width: 480px) {
-  .mcp-row {
-    flex-direction: column;
-  }
+  /* keep the command + icon button on one row; the command scrolls horizontally
+     and the icon stays compact on the right (don't stack into a wide empty bar) */
   .mcp-code {
     font-size: 0.66rem;
-  }
-  .mcp-copy {
-    padding: 0.5rem 0;
   }
 }
 
