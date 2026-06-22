@@ -595,6 +595,11 @@ html.fonts-ready .hero h1 .typed {
   border-top: 1px solid var(--border);
 }
 
+/* tighter top gap — used for the first rule right under the hero */
+.rule--tight {
+  margin-top: 0.75rem;
+}
+
 /* ---------- post list ---------- */
 
 .post-list {
@@ -925,9 +930,11 @@ html.fonts-ready .hero h1 .typed {
   flex-direction: column;
   gap: 0.4rem;
   padding: 1.1rem 1.3rem;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
   border-radius: 4px;
-  background: var(--bg-raised);
+  background: color-mix(in srgb, var(--bg-raised) 45%, transparent);
+  backdrop-filter: blur(12px) saturate(125%);
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
   font-family: var(--font-mono);
   font-size: 0.8rem;
   cursor: pointer;
@@ -1005,9 +1012,11 @@ html.fonts-ready .hero h1 .typed {
   flex-direction: column;
   gap: 0.75rem;
   padding: 1.1rem 1.3rem;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
   border-radius: 4px;
-  background: var(--bg-raised);
+  background: color-mix(in srgb, var(--bg-raised) 45%, transparent);
+  backdrop-filter: blur(12px) saturate(125%);
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
 }
 
 .mcp-intro {
@@ -1019,13 +1028,31 @@ html.fonts-ready .hero h1 .typed {
 
 .mcp-intro abbr {
   color: var(--text-bright);
-  text-decoration: underline dotted;
-  text-decoration-color: var(--accent);
-  text-underline-offset: 2px;
+  text-decoration: none;
   cursor: help;
 }
 
+.mcp-cmds {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
 .mcp-cmd {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.mcp-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--text-dim);
+}
+
+.mcp-row {
   display: flex;
   align-items: stretch;
   gap: 0.5rem;
@@ -1077,11 +1104,17 @@ html.fonts-ready .hero h1 .typed {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 0.72rem;
+  line-height: 1.5;
   color: var(--text-dim);
 }
 
+.mcp-inline {
+  color: var(--text-bright);
+  word-break: break-all;
+}
+
 @media (max-width: 480px) {
-  .mcp-cmd {
+  .mcp-row {
     flex-direction: column;
   }
   .mcp-code {

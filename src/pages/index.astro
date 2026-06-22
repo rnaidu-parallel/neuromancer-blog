@@ -27,19 +27,38 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </section>
 
-  <h2 class="rule" aria-label="Connect via agent">agent access</h2>
+  <h2 class="rule rule--tight" aria-label="Connect via agent">agent access</h2>
   <aside class="mcp">
     <p class="mcp-intro">
-      I publish myself as an <abbr title="Model Context Protocol">MCP</abbr> server. Add it to your
-      agent and it can read my work, weigh a role, and reach out.
+      Add my <abbr title="Model Context Protocol">MCP</abbr> server to your agent — then ask it
+      about my work, or have it reach out.
     </p>
-    <div class="mcp-cmd">
-      <code class="mcp-code" id="mcp-cmd"
-        >claude mcp add --transport http rahul https://mcp.neuromancer.in/api/mcp</code
-      >
-      <button type="button" class="mcp-copy" data-copy-cmd aria-label="Copy command">copy</button>
+    <div class="mcp-cmds">
+      <div class="mcp-cmd">
+        <span class="mcp-label">claude code</span>
+        <div class="mcp-row">
+          <code class="mcp-code"
+            >claude mcp add --transport http rahul https://mcp.neuromancer.in/api/mcp</code
+          >
+          <button type="button" class="mcp-copy" data-copy-cmd aria-label="Copy Claude Code command"
+            >copy</button
+          >
+        </div>
+      </div>
+      <div class="mcp-cmd">
+        <span class="mcp-label">codex</span>
+        <div class="mcp-row">
+          <code class="mcp-code">codex mcp add rahul --url https://mcp.neuromancer.in/api/mcp</code>
+          <button type="button" class="mcp-copy" data-copy-cmd aria-label="Copy Codex command"
+            >copy</button
+          >
+        </div>
+      </div>
     </div>
-    <p class="mcp-hint">&gt; then ask: “is this person a fit for &lt;role&gt;? if so, reach out.”</p>
+    <p class="mcp-hint">
+      Any other agent: point an MCP client at
+      <code class="mcp-inline">https://mcp.neuromancer.in/api/mcp</code> over streamable HTTP.
+    </p>
   </aside>
 
   <Scriptorium />
@@ -93,22 +112,24 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
       if (e.key === 'Enter') openUplink();
     });
 
-    // copy the MCP install command, with a burst from the button
-    const copyBtn = document.querySelector('[data-copy-cmd]');
-    const cmd = document.getElementById('mcp-cmd');
-    copyBtn?.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText((cmd.textContent || '').trim());
-        copyBtn.textContent = 'copied';
-        copyBtn.classList.add('copied');
-        fireBurst(copyBtn);
-        setTimeout(() => {
-          copyBtn.textContent = 'copy';
-          copyBtn.classList.remove('copied');
-        }, 1400);
-      } catch (err) {
-        /* clipboard blocked; the command is selectable as a fallback */
-      }
+    // copy each MCP install command, with a burst from the clicked button
+    document.querySelectorAll('[data-copy-cmd]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const code = btn.closest('.mcp-row')?.querySelector('.mcp-code');
+        if (!code) return;
+        try {
+          await navigator.clipboard.writeText((code.textContent || '').trim());
+          btn.textContent = 'copied';
+          btn.classList.add('copied');
+          fireBurst(btn);
+          setTimeout(() => {
+            btn.textContent = 'copy';
+            btn.classList.remove('copied');
+          }, 1400);
+        } catch (err) {
+          /* clipboard blocked; the command is selectable as a fallback */
+        }
+      });
     });
   </script>
 </Base>
