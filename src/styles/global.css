@@ -1076,15 +1076,14 @@ html.fonts-ready .hero h1 .typed {
 
 .mcp-copy {
   flex: 0 0 auto;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
-  text-transform: lowercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--accent);
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 0 0.9rem;
+  padding: 0 0.8rem;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -1098,6 +1097,18 @@ html.fonts-ready .hero h1 .typed {
 .mcp-copy.copied {
   color: var(--text-bright);
   border-color: var(--accent);
+}
+
+.mcp-copy .icon-check {
+  display: none;
+}
+
+.mcp-copy.copied .icon-copy {
+  display: none;
+}
+
+.mcp-copy.copied .icon-check {
+  display: inline;
 }
 
 .mcp-hint {
