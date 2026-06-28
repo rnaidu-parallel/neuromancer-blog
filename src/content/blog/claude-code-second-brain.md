@@ -1,6 +1,6 @@
 ---
 title: "How I set up Claude Code to stop starting from zero"
-description: "A global memory vault that gives my coding agent context across sessions and machines, plus the small config tweaks that keep a live session sharp. The architecture, the tooling I looked at, and the honest numbers."
+description: "A global memory vault that gives my coding agent context across sessions, machines, and agents, plus the small config tweaks that keep a live session sharp. The architecture, the tooling I looked at, and the honest numbers."
 pubDate: 2026-06-28
 tags: ["ai-engineering", "claude-code", "agent-memory", "context-engineering", "knowledge-graph", "developer-tools"]
 draft: false
@@ -10,8 +10,9 @@ image: "/images/second-brain-graph.png"
 Every new session with a coding agent starts from zero. It does not remember yesterday's decision,
 the dead end you ruled out, or why the auth module is shaped the way it is. So the session opens with
 the agent rebuilding that context from scratch: I point it at the same two or three planning documents
-and it reads them end to end, re-scanning the same files it walked yesterday. Roughly 11,000 tokens
-burned reconstructing what it already knew before a single useful instruction lands.
+and it reads them end to end, then re-scans the same code it walked yesterday. That is easily fifteen to
+twenty thousand tokens, sometimes more, burned reconstructing what it already knew before a single
+useful instruction lands.
 
 The fix is not a better model, it is managing what sits in the context window. So I spent an
 afternoon on how other people handle that and found the same problem hit from a few angles:
@@ -101,7 +102,7 @@ table, so I treat them as marketing.
 
 ### The numbers, and how they rotted
 
-On day one the win was real: reading this project's planning docs cold ran about 11,000 tokens, and
+On day one the win was real. I measured just the planning-docs part of that cold read, about 11,000 tokens, and
 `/orient` (the map plus the last log) replaced it with a few hundred, roughly a 15x cut from
 navigation structure alone.
 
@@ -113,7 +114,7 @@ index and becomes the cold read it was meant to replace.
 
 ## Avoiding the brain rot
 
-So I changed how `/save` writes, so the index prunes itself instead of growing forever. The map is
+So I changed how `/save` writes: the index now prunes itself instead of growing forever. The map is
 rebuilt each save as a router, not an append log: resolved and shipped items move to an `archive.md`
 (moved, not deleted, so it is one git step back), deferred ones get parked with a wake-date and
 resurface when due, and active ones compress to a pointer plus a link. It auto-archives only on
@@ -130,7 +131,7 @@ discards detail and a save after the fact only sees the summary. It is debounced
 compactions in one session do not stack saves. Saving full state before compaction beats giving the
 compactor a list of things to keep, which still relies on a lossy summary getting it right.
 
-## Across machines
+## Across machines and agents
 
 Two machines, a laptop and a desktop, sharing one brain:
 
@@ -152,6 +153,12 @@ hook that rebuilds the graph, so `/orient` runs the structural rebuild after a p
 graph current. And delegation only works one direction: the macOS Keychain blocks headless SSH auth,
 so `claude -p` into the Mac cannot read credentials from the login Keychain, while delegating toward
 the Linux box is fine.
+
+What makes this work across machines is also what makes it work across agents: I own the context. It
+is plain markdown in a git repo, not state locked inside one tool. The vault is not tied to Claude
+Code, so I can point Codex or any other agent at the same files and the accumulated knowledge comes
+with it; only the glue skills get re-done per agent. The memory is mine, not a feature I rent from
+whichever assistant I am using this month.
 
 ## Quality-of-life
 
