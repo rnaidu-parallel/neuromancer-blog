@@ -7,9 +7,9 @@ export async function GET(context) {
   );
 
   return rss({
-    title: 'blackwall',
+    title: 'Rahul Naidu — a journal of measured work in AI engineering',
     description:
-      'Production AI engineering, with evidence: tool-calling reliability, prompt caching, evals, agent memory.',
+      'A journal of measured work in AI engineering: production lessons, reproducible evals, real failure modes, and honest tradeoffs.',
     site: context.site,
     items: posts.map((post) => ({
       title: post.data.title,

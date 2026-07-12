@@ -581,6 +581,7 @@ blockquote {
 /* ---------- prose and temporary inner-page compatibility ---------- */
 
 .post-header,
+.register-header,
 .prose,
 .post-list,
 .empty-state,
@@ -595,7 +596,12 @@ blockquote {
   border-top: 1px solid var(--rule);
 }
 
+.register-header {
+  margin: 0 auto var(--space-5);
+}
+
 .post-header h1,
+.register-header h1,
 .prose h1,
 .prose h2,
 .prose h3 {
@@ -604,6 +610,15 @@ blockquote {
 }
 
 .post-header h1 {
+  max-width: 18ch;
+  margin: 10px 0 14px;
+  color: var(--ink);
+  font-size: clamp(var(--step-4), 5vw, var(--step-6));
+  font-weight: 800;
+  line-height: 1.06;
+}
+
+.register-header h1 {
   max-width: 18ch;
   margin: 10px 0 14px;
   color: var(--ink);
@@ -1002,6 +1017,242 @@ blockquote {
   font-size: var(--step--1);
 }
 
+/* ---------- apparatus and colophon registers ---------- */
+
+.apparatus-list,
+.colophon-register {
+  display: grid;
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.apparatus-entry {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: clamp(var(--space-3), 4vw, var(--space-5));
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.apparatus-entry:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.apparatus-entry:hover h2,
+.apparatus-entry:hover .apparatus-link {
+  color: var(--prussian);
+}
+
+.apparatus-plate {
+  align-self: start;
+}
+
+.apparatus-body {
+  min-width: 0;
+}
+
+.apparatus-body h2,
+.colophon-section h2,
+.not-found h1 {
+  margin: 0 0 var(--space-2);
+  color: var(--ink);
+  font-family: var(--font-display);
+  letter-spacing: 0;
+}
+
+.apparatus-body h2 {
+  font-size: clamp(var(--step-2), 3vw, var(--step-4));
+  font-weight: 740;
+  line-height: 1.12;
+  transition: color 180ms ease-out;
+}
+
+.apparatus-body p:not(.entry-kicker) {
+  margin: 0 0 var(--space-2);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.apparatus-link {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: color 180ms ease-out;
+}
+
+.colophon-register {
+  gap: 0;
+  font-size: 1rem;
+  line-height: 1.72;
+}
+
+.colophon-section,
+.mcp-apparatus {
+  padding: var(--space-5) 0;
+  border-top: 4px double var(--rule);
+}
+
+.colophon-section:last-of-type,
+.mcp-apparatus {
+  border-bottom: 4px double var(--rule);
+}
+
+.colophon-label {
+  margin: 0 0 var(--space-3);
+  color: var(--prussian);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 560;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.colophon-section p:not(.colophon-label),
+.mcp-apparatus p:not(.colophon-label) {
+  margin: 0 0 1.15rem;
+}
+
+.colophon-section ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.colophon-section li + li {
+  margin-top: 0.45rem;
+}
+
+.colophon-section h2 {
+  margin-top: var(--space-4);
+  font-size: var(--step-2);
+  line-height: 1.24;
+}
+
+.colophon-section h2:first-of-type {
+  margin-top: 0;
+}
+
+.when {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: 450;
+  text-transform: uppercase;
+}
+
+.mcp-apparatus {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--wash) 42%, transparent);
+}
+
+.mcp-intro,
+.mcp-hint {
+  color: var(--ink);
+}
+
+.mcp-cmds {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.mcp-cmd {
+  display: grid;
+  gap: 7px;
+}
+
+.mcp-label {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.mcp-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+  background: var(--wash);
+}
+
+.mcp-code,
+.mcp-inline {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+}
+
+.mcp-code {
+  min-width: 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.mcp-copy {
+  display: inline-grid;
+  min-width: 66px;
+  place-items: center;
+  border: 0;
+  border-left: 1px solid var(--rule);
+  background: transparent;
+  color: var(--prussian);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 560;
+  letter-spacing: 0.04em;
+}
+
+.mcp-copy .check-mark {
+  display: none;
+  color: var(--stamp);
+}
+
+.mcp-copy.copied .copy-mark {
+  display: none;
+}
+
+.mcp-copy.copied .check-mark {
+  display: inline;
+}
+
+.not-found {
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+
+.not-found h1 {
+  font-size: clamp(var(--step-5), 8vw, var(--step-7));
+  font-weight: 800;
+  line-height: 1;
+}
+
+.not-found p:not(.section-heading) {
+  margin: 0 0 var(--space-3);
+  font-size: var(--step-1);
+}
+
+.not-found-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  font-family: var(--font-mono);
+  font-size: var(--step--1) !important;
+  text-transform: uppercase;
+}
+
 /* ---------- motion ---------- */
 
 .reveal {
@@ -1095,6 +1346,12 @@ blockquote {
     padding: var(--space-4) 0;
   }
 
+  .apparatus-entry {
+    grid-template-columns: 116px minmax(0, 1fr);
+    gap: 16px;
+    padding: var(--space-4) 0;
+  }
+
   .caption {
     font-size: 0.58rem;
   }
@@ -1134,7 +1391,8 @@ blockquote {
     grid-template-columns: 1fr;
   }
 
-  .entry-plate {
+  .entry-plate,
+  .apparatus-plate {
     width: min(150px, 62vw);
   }
 

@@ -24,11 +24,7 @@ const {
   masthead = 'compact',
 } = Astro.props;
 
-const legacyName = ['black', 'wall'].join('');
-const pageTitle = title
-  .replace(new RegExp(`\\s*[·-]\\s*${legacyName}`, 'gi'), ' · Rahul Naidu')
-  .replace(new RegExp(`${legacyName}\\s*[·-]\\s*`, 'gi'), '')
-  .replace(new RegExp(`\\b${legacyName}\\b`, 'gi'), 'Rahul Naidu');
+const pageTitle = title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image ?? '/images/og-default.png', Astro.site);
 const path = Astro.url.pathname;
@@ -60,7 +56,7 @@ const navItems = [
     <link
       rel="alternate"
       type="application/rss+xml"
-      title="Rahul Naidu, a journal of measured work in AI engineering"
+      title="Rahul Naidu — a journal of measured work in AI engineering"
       href={new URL('rss.xml', Astro.site)}
     />
     <meta name="generator" content={Astro.generator} />

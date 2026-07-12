@@ -1,44 +1,58 @@
-// Renders the default social-share card (1200×630) → public/images/og-default.png.
-// Used as the og:image / twitter:image fallback for any page without its own image.
-// Re-run after design changes: `node scripts/gen-og-default.mjs`. Output is committed
-// (build-time scrapers need a real raster — SVG is rejected by X/Facebook/LinkedIn).
+// Renders the default social-share card (1200x630) to public/images/og-default.png.
+// Re-run after identity changes: `node scripts/gen-og-default.mjs`.
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 
 const out = fileURLToPath(new URL('../public/images/og-default.png', import.meta.url));
+const besley = fileURLToPath(
+  new URL('../node_modules/@fontsource-variable/besley/files/besley-latin-wght-normal.woff2', import.meta.url)
+);
 
-// design tokens mirrored from src/styles/global.css (dark theme)
-const bg = '#0a0e12';
-const accent = '#a8173a';
-const bright = '#edf3f6';
-const dim = '#6e7f8b';
-const grid = 'rgba(110, 11, 33, 0.10)';
+const rag = '#FCFBF7';
+const ink = '#1A2129';
+const prussian = '#17456E';
+const wash = '#E3EDF5';
+const stamp = '#C63D2F';
+const dim = '#5D6872';
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <radialGradient id="vignette" cx="50%" cy="42%" r="75%">
-      <stop offset="55%" stop-color="${bg}" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#02060a" stop-opacity="0.55"/>
-    </radialGradient>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M40 0 H0 V40" fill="none" stroke="${grid}" stroke-width="1"/>
+    <style>
+      @font-face {
+        font-family: 'Besley OG';
+        src: url('${besley}') format('woff2');
+        font-weight: 400 900;
+      }
+      .display { font-family: 'Besley OG', Georgia, serif; }
+      .body { font-family: Georgia, serif; }
+      .mono { font-family: Menlo, Consolas, monospace; }
+    </style>
+    <pattern id="grain" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M0 13 H34 M12 0 V34" stroke="${prussian}" stroke-opacity="0.055" stroke-width="1"/>
+      <circle cx="25" cy="8" r="1.2" fill="${prussian}" fill-opacity="0.075"/>
+      <circle cx="7" cy="27" r="0.9" fill="${stamp}" fill-opacity="0.08"/>
     </pattern>
   </defs>
 
-  <rect width="1200" height="630" fill="${bg}"/>
-  <rect width="1200" height="630" fill="url(#grid)"/>
-  <rect width="1200" height="630" fill="url(#vignette)"/>
+  <rect width="1200" height="630" fill="${rag}"/>
+  <rect width="1200" height="630" fill="url(#grain)"/>
+  <rect x="74" y="70" width="1052" height="1" fill="${prussian}" opacity="0.42"/>
+  <rect x="74" y="78" width="1052" height="1" fill="${prussian}" opacity="0.42"/>
+  <rect x="74" y="552" width="1052" height="1" fill="${prussian}" opacity="0.42"/>
+  <rect x="74" y="560" width="1052" height="1" fill="${prussian}" opacity="0.42"/>
 
-  <!-- blood-red top rule -->
-  <rect x="0" y="0" width="1200" height="6" fill="${accent}"/>
+  <circle cx="992" cy="184" r="58" fill="none" stroke="${stamp}" stroke-width="3"/>
+  <circle cx="992" cy="184" r="45" fill="none" stroke="${stamp}" stroke-width="1.5" opacity="0.8"/>
+  <text x="992" y="198" text-anchor="middle" class="display" font-size="43" font-weight="800" fill="${stamp}">RN</text>
 
-  <!-- wordmark -->
-  <text x="100" y="330" font-family="'Martian Mono', ui-monospace, Menlo, monospace"
-        font-size="118" font-weight="700" letter-spacing="-2" fill="${bright}">blackwall<tspan fill="${accent}">_</tspan></text>
+  <text x="96" y="275" class="display" font-size="112" font-weight="800" letter-spacing="0" fill="${ink}">RAHUL NAIDU</text>
+  <text x="102" y="346" class="body" font-size="40" fill="${prussian}">A journal of measured work in AI engineering.</text>
 
-  <!-- domain -->
-  <text x="104" y="408" font-family="'Martian Mono', ui-monospace, Menlo, monospace"
-        font-size="34" font-weight="500" letter-spacing="2" fill="${dim}">blog.neuromancer.in</text>
+  <rect x="100" y="396" width="430" height="1" fill="${prussian}" opacity="0.55"/>
+  <rect x="100" y="408" width="310" height="1" fill="${prussian}" opacity="0.35"/>
+
+  <text x="102" y="468" class="mono" font-size="24" letter-spacing="1" fill="${dim}">VOL. I · EST. JUNE 2026 · BANGALORE</text>
+  <text x="102" y="512" class="mono" font-size="22" letter-spacing="1" fill="${prussian}">blog.neuromancer.in</text>
 </svg>`;
 
 await sharp(Buffer.from(svg)).png().toFile(out);

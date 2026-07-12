@@ -15,11 +15,8 @@
     "@astrojs/mdx": "^6.0.2",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
-    "@chenglou/pretext": "^0.0.8",
     "@fontsource-variable/azeret-mono": "^5.2.11",
     "@fontsource-variable/besley": "^5.2.8",
-    "@fontsource-variable/martian-mono": "^5.2.7",
-    "@fontsource-variable/newsreader": "^5.2.10",
     "@fontsource-variable/source-serif-4": "^5.2.9",
     "astro": "^6.4.4"
   },
