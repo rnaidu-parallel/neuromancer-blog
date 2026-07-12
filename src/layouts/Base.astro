@@ -93,7 +93,7 @@ const navItems = [
         <div class="double-rule" aria-hidden="true"></div>
         <div class="masthead-row">
           <a class="wordmark" href="/" aria-label="Rahul Naidu home">Rahul Naidu</a>
-          <span class="seal" aria-label="RN masthead seal">
+          <span class="seal" aria-hidden="true">
             <Icon name="seal" />
           </span>
         </div>
@@ -174,11 +174,18 @@ const navItems = [
       setLabel();
       button?.addEventListener('click', () => {
         const root = document.documentElement;
+        const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
         const next = root.dataset.theme === 'print' ? 'paper' : 'print';
+        if (!reducedMotion) root.classList.add('theme-swapping');
         if (next === 'print') root.dataset.theme = 'print';
         else delete root.dataset.theme;
         localStorage.setItem('theme', next);
         setLabel();
+        if (!reducedMotion) {
+          const clearSwap = () => root.classList.remove('theme-swapping');
+          root.addEventListener('transitionend', clearSwap, { once: true });
+          setTimeout(clearSwap, 260);
+        }
       });
     </script>
   </body>

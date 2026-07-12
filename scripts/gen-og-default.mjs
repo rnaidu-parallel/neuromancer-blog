@@ -1,12 +1,14 @@
 // Renders the default social-share card (1200x630) to public/images/og-default.png.
 // Re-run after identity changes: `node scripts/gen-og-default.mjs`.
 import sharp from 'sharp';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const out = fileURLToPath(new URL('../public/images/og-default.png', import.meta.url));
 const besley = fileURLToPath(
   new URL('../node_modules/@fontsource-variable/besley/files/besley-latin-wght-normal.woff2', import.meta.url)
 );
+const besleyData = readFileSync(besley).toString('base64');
 
 const rag = '#FCFBF7';
 const ink = '#1A2129';
@@ -20,7 +22,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
     <style>
       @font-face {
         font-family: 'Besley OG';
-        src: url('${besley}') format('woff2');
+        src: url('data:font/woff2;base64,${besleyData}') format('woff2');
         font-weight: 400 900;
       }
       .display { font-family: 'Besley OG', Georgia, serif; }
@@ -48,8 +50,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <text x="96" y="275" class="display" font-size="112" font-weight="800" letter-spacing="0" fill="${ink}">RAHUL NAIDU</text>
   <text x="102" y="346" class="body" font-size="40" fill="${prussian}">A journal of measured work in AI engineering.</text>
 
-  <rect x="100" y="396" width="430" height="1" fill="${prussian}" opacity="0.55"/>
-  <rect x="100" y="408" width="310" height="1" fill="${prussian}" opacity="0.35"/>
+  <rect x="102" y="396" width="720" height="1" fill="${prussian}" opacity="0.55"/>
+  <rect x="102" y="408" width="720" height="1" fill="${prussian}" opacity="0.35"/>
 
   <text x="102" y="468" class="mono" font-size="24" letter-spacing="1" fill="${dim}">VOL. I · EST. JUNE 2026 · BANGALORE</text>
   <text x="102" y="512" class="mono" font-size="22" letter-spacing="1" fill="${prussian}">blog.neuromancer.in</text>
@@ -57,3 +59,4 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 
 await sharp(Buffer.from(svg)).png().toFile(out);
 console.log('wrote', out);
+console.log('loaded Besley font', besley);

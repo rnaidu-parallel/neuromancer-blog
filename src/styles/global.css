@@ -8,6 +8,7 @@
   --prussian: #17456e;
   --wash: #e3edf5;
   --stamp: #c63d2f;
+  --stamp-text: var(--stamp);
   --raised: #f6f8f8;
   --rule: rgba(23, 69, 110, 0.3);
   --rule-strong: rgba(23, 69, 110, 0.58);
@@ -57,6 +58,7 @@
   --prussian: #bfdcef;
   --wash: #16354f;
   --stamp: #e05545;
+  --stamp-text: #f06f61;
   --raised: #12304a;
   --rule: rgba(191, 220, 239, 0.34);
   --rule-strong: rgba(191, 220, 239, 0.64);
@@ -95,6 +97,13 @@ body {
   color: var(--ink);
 }
 
+html.theme-swapping,
+html.theme-swapping * {
+  transition-duration: 200ms;
+  transition-property: background-color, color;
+  transition-timing-function: ease-out;
+}
+
 @view-transition {
   navigation: auto;
 }
@@ -114,11 +123,6 @@ a {
 
 a:visited {
   color: var(--prussian);
-}
-
-a:hover {
-  color: var(--ink);
-  text-decoration-color: currentColor;
 }
 
 button {
@@ -321,7 +325,6 @@ blockquote {
   text-decoration-color: var(--rule-strong);
 }
 
-.journal-nav a:hover,
 .journal-nav a[aria-current='page'] {
   color: var(--prussian);
 }
@@ -417,10 +420,6 @@ blockquote {
   padding-top: 0;
 }
 
-.entry:hover .entry-title {
-  color: var(--prussian);
-}
-
 .entry-plate {
   align-self: start;
 }
@@ -450,12 +449,8 @@ blockquote {
 
 .plate .redraw {
   stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-
-.entry:hover .plate .redraw,
-.plate:hover .redraw {
-  animation: plate-redraw 500ms ease-out forwards;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 240ms ease-out;
 }
 
 .caption {
@@ -467,7 +462,7 @@ blockquote {
 }
 
 .fig-label {
-  color: var(--stamp);
+  color: var(--stamp-text);
   font-weight: 560;
 }
 
@@ -551,7 +546,7 @@ blockquote {
 
 .margin-note span {
   display: block;
-  color: var(--stamp);
+  color: var(--stamp-text);
   font-weight: 560;
 }
 
@@ -899,9 +894,9 @@ blockquote {
 
 .article-body figure,
 .article-body figure[style] {
-  max-width: 100% !important;
-  margin: var(--space-5) 0 !important;
-  text-align: left !important;
+  max-width: 100%;
+  margin: var(--space-5) 0;
+  text-align: left;
 }
 
 .article-body img,
@@ -910,27 +905,28 @@ blockquote {
 .article-body img[style],
 .article-body video[style],
 .article-body iframe[style] {
-  width: 100% !important;
-  max-width: 100% !important;
-  border: 1px solid var(--rule) !important;
-  border-radius: 0 !important;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 0;
   background: var(--wash);
 }
 
-.article-body iframe,
-.article-body iframe[style] {
-  aspect-ratio: 4 / 3;
-  height: auto !important;
+.article-body img,
+.article-body video,
+.article-body img[style],
+.article-body video[style] {
+  height: auto;
 }
 
 .article-body figcaption,
 .article-body figcaption[style] {
-  margin-top: 0.6rem !important;
-  color: var(--ink-soft) !important;
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: var(--step--2) !important;
+  font-size: var(--step--2);
   line-height: 1.55;
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .note-ref {
@@ -939,7 +935,7 @@ blockquote {
   margin: 0 0.1em;
   padding: 0;
   background: transparent;
-  color: var(--stamp);
+  color: var(--stamp-text);
   cursor: pointer;
   font-family: var(--font-mono);
   font-size: 0.62em;
@@ -975,7 +971,7 @@ blockquote {
 
 .post-margin .sidenote span,
 .inline-note strong {
-  color: var(--stamp);
+  color: var(--stamp-text);
   font-weight: 560;
 }
 
@@ -1010,10 +1006,6 @@ blockquote {
   font-size: var(--step-2);
   font-weight: 700;
   line-height: 1.2;
-}
-
-.post-list .post-title:hover {
-  color: var(--prussian);
 }
 
 .post-list .post-desc {
@@ -1051,11 +1043,6 @@ blockquote {
 
 .apparatus-entry:last-child {
   border-bottom: 1px solid var(--rule);
-}
-
-.apparatus-entry:hover h2,
-.apparatus-entry:hover .apparatus-link {
-  color: var(--prussian);
 }
 
 .apparatus-plate {
@@ -1226,19 +1213,26 @@ blockquote {
   font-size: 0.62rem;
   font-weight: 560;
   letter-spacing: 0.04em;
+  padding: 8px 10px;
+}
+
+.mcp-copy .copy-mark,
+.mcp-copy .check-mark {
+  grid-area: 1 / 1;
+  transition: opacity 150ms ease-out;
 }
 
 .mcp-copy .check-mark {
-  display: none;
-  color: var(--stamp);
+  color: var(--stamp-text);
+  opacity: 0;
 }
 
 .mcp-copy.copied .copy-mark {
-  display: none;
+  opacity: 0;
 }
 
 .mcp-copy.copied .check-mark {
-  display: inline;
+  opacity: 1;
 }
 
 .not-found {
@@ -1282,12 +1276,22 @@ blockquote {
   }
 }
 
-@keyframes plate-redraw {
-  from {
-    stroke-dashoffset: 1;
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--ink);
+    text-decoration-color: currentColor;
   }
 
-  to {
+  .journal-nav a:hover,
+  .entry:hover .entry-title,
+  .post-list .post-title:hover,
+  .apparatus-entry:hover h2,
+  .apparatus-entry:hover .apparatus-link {
+    color: var(--prussian);
+  }
+
+  .entry:hover .plate .redraw,
+  .plate:hover .redraw {
     stroke-dashoffset: 0;
   }
 }
@@ -1320,7 +1324,7 @@ blockquote {
   }
 
   .post-margin {
-    min-height: 0 !important;
+    min-height: 0;
   }
 
   .post-margin .sidenote {
@@ -1430,12 +1434,13 @@ blockquote {
     animation: none;
   }
 
-  .entry:hover .plate .redraw,
-  .plate:hover .redraw {
-    animation: none;
-  }
-
   .plate .redraw {
     stroke-dashoffset: 0;
+    transition: none;
+  }
+
+  html.theme-swapping,
+  html.theme-swapping * {
+    transition: none;
   }
 }

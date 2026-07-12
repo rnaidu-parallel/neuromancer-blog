@@ -41,25 +41,50 @@ const escapeHtml = (value: string) =>
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;');
 
-const renderedContent = await Astro.slots.render('default');
-const unanchoredSidenotes: { number: number; text: string }[] = [];
-const anchoredSidenotes: { number: number; text: string }[] = [];
+const ensureAttribute = (tag: string, name: string, value: string) =>
+  new RegExp(`\\s${name}=`, 'i').test(tag) ? tag : tag.replace(/>$/, ` ${name}="${value}">`);
 
-const contentHtml = (post.data.sidenotes ?? []).reduce((html, sidenote, index) => {
+const normalizeTableHeaders = (html: string) =>
+  html.replace(/<table\b[\s\S]*?<\/table>/gi, (table) =>
+    table
+      .replace(/<thead\b[\s\S]*?<\/thead>/i, (thead) =>
+        thead.replace(/<(td|th)\b([^>]*)>([\s\S]*?)<\/\1>/gi, (_cell, _tag, attrs, body) =>
+          ensureAttribute(`<th${attrs}>`, 'scope', 'col') + body + '</th>'
+        )
+      )
+      .replace(/<tbody\b[\s\S]*?<\/tbody>/i, (tbody) =>
+        tbody.replace(/<tr\b[\s\S]*?<\/tr>/gi, (row) => {
+          if (/<th\b/i.test(row)) return row;
+          return row.replace(/<td\b([^>]*)>([\s\S]*?)<\/td>/i, (_cell, attrs, body) =>
+            ensureAttribute(`<th${attrs}>`, 'scope', 'row') + body + '</th>'
+          );
+        })
+      )
+  );
+
+const renderedContent = await Astro.slots.render('default');
+const unanchoredSidenotes: { number: number; html: string }[] = [];
+const anchoredSidenotes: { number: number; html: string }[] = [];
+let sidenoteSearchFrom = 0;
+
+const contentWithSidenotes = (post.data.sidenotes ?? []).reduce((html, sidenote, index) => {
   const number = index + 1;
-  const offset = html.indexOf(sidenote.anchor);
+  const offset = html.indexOf(sidenote.anchor, sidenoteSearchFrom);
+  const safeText = escapeHtml(sidenote.text);
 
   if (offset === -1) {
-    unanchoredSidenotes.push({ number, text: sidenote.text });
+    unanchoredSidenotes.push({ number, html: safeText });
     return html;
   }
 
-  const safeText = escapeHtml(sidenote.text);
-  anchoredSidenotes.push({ number, text: sidenote.text });
+  anchoredSidenotes.push({ number, html: safeText });
   const marker = `<button class="note-ref" type="button" aria-expanded="false" aria-controls="inline-note-${number}" data-note-ref="${number}">${number}</button><span class="inline-note" id="inline-note-${number}"><strong>${number}.</strong> ${safeText}</span>`;
   const insertAt = offset + sidenote.anchor.length;
+  sidenoteSearchFrom = insertAt + marker.length;
   return `${html.slice(0, insertAt)}${marker}${html.slice(insertAt)}`;
 }, renderedContent);
+
+const contentHtml = normalizeTableHeaders(contentWithSidenotes);
 ---
 
 <Base title={`${title} · Rahul Naidu`} description={description} type="article" image={image} wide>
@@ -108,13 +133,13 @@ const contentHtml = (post.data.sidenotes ?? []).reduce((html, sidenote, index) =
           {unanchoredSidenotes.map((note) => (
             <p class="margin-note">
               <span>{note.number}.</span>
-              {note.text}
+              <Fragment set:html={note.html} />
             </p>
           ))}
           {anchoredSidenotes.map((note) => (
             <p class="margin-note sidenote" data-note-id={note.number}>
               <span>{note.number}.</span>
-              {note.text}
+              <Fragment set:html={note.html} />
             </p>
           ))}
         </aside>
@@ -137,6 +162,10 @@ const contentHtml = (post.data.sidenotes ?? []).reduce((html, sidenote, index) =
       const margin = document.querySelector('.post-margin');
       if (!margin || !matchMedia('(min-width: 1100px)').matches) {
         margin?.classList.remove('is-positioned');
+        margin?.style.removeProperty('min-height');
+        margin?.querySelectorAll('.sidenote[data-note-id]').forEach((note) => {
+          note.style.removeProperty('--note-top');
+        });
         return;
       }
       const top = margin.getBoundingClientRect().top + scrollY;
