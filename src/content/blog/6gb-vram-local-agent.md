@@ -4,6 +4,7 @@ description: "A personal AI agent on a 2018 gaming laptop with 6GB of VRAM. The 
 pubDate: 2026-06-11
 tags: ["local-llm", "ollama", "agents", "qwen", "hermes", "self-hosting"]
 draft: false
+margin_note: "A personal AI agent on a 2018 gaming laptop with 6GB of VRAM, measured through five budget constraints."
 ---
 
 I have an Acer Predator Helios 300 from 2018. It has 16GB of RAM, a 6GB GTX 1660 Ti, a 256GB SSD and a 1TB hard drive, and it dual-boots Windows and Ubuntu. Everything here ran in Ubuntu.

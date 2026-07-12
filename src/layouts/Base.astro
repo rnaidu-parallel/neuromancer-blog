@@ -32,6 +32,12 @@ const pageTitle = title
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image ?? '/images/og-default.png', Astro.site);
 const path = Astro.url.pathname;
+const compactCrumb =
+  path.startsWith('/blog/') && path !== '/blog/'
+    ? path.replace(/^\/blog\/|\/$/g, '').toUpperCase()
+    : path === '/'
+      ? 'HOME'
+      : path.replace(/^\/|\/$/g, '').toUpperCase() || 'HOME';
 const isHome = masthead === 'home';
 const navItems = [
   { href: '/blog/', label: 'posts' },
@@ -100,7 +106,7 @@ const navItems = [
               <p class="dateline">VOL. I · EST. JUNE 2026 · BANGALORE</p>
             </>
           ) : (
-            <p class="dateline">VOL. I · {path === '/' ? 'HOME' : path.replace(/^\/|\/$/g, '').toUpperCase() || 'HOME'} · BANGALORE</p>
+            <p class="dateline">VOL. I · {compactCrumb} · BANGALORE</p>
           )
         }
         <div class="double-rule" aria-hidden="true"></div>

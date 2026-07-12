@@ -5,6 +5,7 @@ pubDate: 2026-06-08
 tags: ["ai-engineering", "tool-calling", "open-models", "openrouter", "evals"]
 draft: false
 repo: https://github.com/rnaidu-parallel/agent-coercion-layer
+margin_note: "The gaps from swapping Claude Sonnet for an open model are why a coercion layer is needed."
 ---
 
 I switched one of my agents from Claude Sonnet to an open model to save money. Most of it kept

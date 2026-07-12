@@ -5,6 +5,7 @@ pubDate: 2026-06-28
 tags: ["ai-engineering", "claude-code", "agent-memory", "context-engineering", "knowledge-graph", "developer-tools"]
 draft: false
 image: "/images/second-brain-graph.png"
+margin_note: "A global memory vault gives the coding agent context across sessions, machines, and agents."
 ---
 
 Every new session with a coding agent starts from zero. It does not remember yesterday's decision,

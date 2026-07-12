@@ -1,0 +1,94 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getFigNumber, renderPlateSvg } from '../lib/plates';
+
+type BlogPost = CollectionEntry<'blog'>;
+
+interface Props {
+  posts: BlogPost[];
+  allPosts?: BlogPost[];
+}
+
+const { posts, allPosts = posts } = Astro.props;
+
+// Same read-time basis used by the post layout.
+const READ_TIME_WPM = 225;
+const formatDate = (date: Date) => date.toISOString().slice(0, 10);
+const readTime = (body: string) => {
+  const words =
+    body
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .match(/\b[\w'-]+\b/g)?.length ?? 0;
+  return Math.max(1, Math.ceil(words / READ_TIME_WPM));
+};
+const subjectLine = (tags: string[]) => tags.slice(0, 3).map((tag) => tag.replaceAll('-', ' '));
+
+const notes = posts
+  .map((post) => ({
+    post,
+    fig: getFigNumber(allPosts, post),
+    note: post.data.margin_note,
+  }))
+  .filter((entry): entry is { post: BlogPost; fig: number; note: string } => Boolean(entry.note));
+---
+
+<div class:list={['journal-layout', { 'journal-layout--with-margin': notes.length > 0 }]}>
+  <section class="entries-column" aria-labelledby="entries-heading">
+    <h1 class="section-heading reveal" id="entries-heading" style="--i: 1">ENTRIES</h1>
+    <div class="entries" aria-label="Published entries">
+      {
+        posts.map((post, index) => {
+          const fig = getFigNumber(allPosts, post);
+          const slug = post.id;
+          const plate = renderPlateSvg(slug, {
+            title: `Cyanotype figure for ${post.data.title}`,
+          });
+
+          return (
+            <a class="entry reveal" style={`--i: ${index + 2}`} href={`/blog/${slug}/`} data-fig={fig}>
+              <div class="entry-plate">
+                <div class="plate" set:html={plate} />
+                <p class="caption">
+                  <span class="fig-label">Fig. {fig}</span>
+                  <span> · {slug}</span>
+                </p>
+              </div>
+              <div class="entry-body">
+                <p class="entry-kicker">
+                  <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                  <span> · {readTime(post.body)} MIN</span>
+                </p>
+                <h2 class="entry-title">{post.data.title}</h2>
+                <p class="entry-desc">{post.data.description}</p>
+                {
+                  post.data.tags.length > 0 && (
+                    <p class="entry-subject">
+                      {subjectLine(post.data.tags).map((subject) => (
+                        <span>{subject}</span>
+                      ))}
+                    </p>
+                  )
+                }
+              </div>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  {
+    notes.length > 0 && (
+      <aside class="marginalia home-marginalia reveal" style="--i: 3" aria-label="Marginalia">
+        <h2>MARGINALIA</h2>
+        {notes.map(({ fig, note }) => (
+          <p class="margin-note" data-note-fig={fig}>
+            <span>Fig. {fig}</span>
+            {note}
+          </p>
+        ))}
+      </aside>
+    )
+  }
+</div>
