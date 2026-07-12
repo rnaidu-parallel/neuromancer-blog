@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icons.astro';
+import LatentField from '../components/LatentField.astro';
 
 interface Props {
   title: string;
@@ -83,6 +84,7 @@ const navItems = [
   </head>
   <body>
     <div class="ambient-layer" aria-hidden="true">
+      <LatentField />
       <slot name="ambient" />
     </div>
 
