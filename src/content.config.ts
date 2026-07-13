@@ -15,6 +15,7 @@ const blog = defineCollection({
     margin_note: z.string().optional(),
     reader_margin: z.array(z.string()).optional(),
     sidenotes: z.array(z.object({ anchor: z.string(), text: z.string() })).optional(),
+    plate: z.object({ kind: z.string(), params: z.record(z.any()).optional() }).optional(),
     /** social-share card; site-root path or absolute URL. Falls back to og-default.png. */
     image: z.string().optional(),
   }),

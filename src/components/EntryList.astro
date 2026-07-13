@@ -42,6 +42,7 @@ const notes = posts
           const fig = getFigNumber(allPosts, post);
           const slug = post.id;
           const plate = renderPlateSvg(slug, {
+            plate: post.data.plate,
             title: `Cyanotype figure for ${post.data.title}`,
           });
 

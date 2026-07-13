@@ -53,7 +53,10 @@ const projects = [
             <div class="apparatus-plate">
               <div
                 class="plate"
-                set:html={renderPlateSvg(p.title, { title: `Cyanotype apparatus plate for ${p.title}` })}
+                set:html={renderPlateSvg(p.title, {
+                  plate: undefined,
+                  title: `Cyanotype apparatus plate for ${p.title}`,
+                })}
               />
               <p class="caption">
                 <span class="fig-label">App. {String(index + 1).padStart(2, '0')}</span>
@@ -72,7 +75,10 @@ const projects = [
             <div class="apparatus-plate">
               <div
                 class="plate"
-                set:html={renderPlateSvg(p.title, { title: `Cyanotype apparatus plate for ${p.title}` })}
+                set:html={renderPlateSvg(p.title, {
+                  plate: undefined,
+                  title: `Cyanotype apparatus plate for ${p.title}`,
+                })}
               />
               <p class="caption">
                 <span class="fig-label">App. {String(index + 1).padStart(2, '0')}</span>

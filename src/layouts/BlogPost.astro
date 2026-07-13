@@ -14,6 +14,7 @@ const slug = post.id;
 const fig = getFigNumber(allPosts, post);
 const plate = renderPlateSvg(slug, {
   large: true,
+  plate: post.data.plate,
   title: `Cyanotype frontispiece for ${slug}`,
 });
 

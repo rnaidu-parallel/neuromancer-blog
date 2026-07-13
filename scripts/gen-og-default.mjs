@@ -43,18 +43,13 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <rect x="74" y="552" width="1052" height="1" fill="${prussian}" opacity="0.42"/>
   <rect x="74" y="560" width="1052" height="1" fill="${prussian}" opacity="0.42"/>
 
-  <circle cx="992" cy="184" r="58" fill="none" stroke="${stamp}" stroke-width="3"/>
-  <circle cx="992" cy="184" r="45" fill="none" stroke="${stamp}" stroke-width="1.5" opacity="0.8"/>
-  <text x="992" y="198" text-anchor="middle" class="display" font-size="43" font-weight="800" fill="${stamp}">RN</text>
-
-  <text x="96" y="275" class="display" font-size="112" font-weight="800" letter-spacing="0" fill="${ink}">RAHUL NAIDU</text>
+  <text x="600" y="275" text-anchor="middle" class="display" font-size="112" font-weight="800" letter-spacing="0" fill="${ink}">RAHUL NAIDU</text>
   <text x="102" y="346" class="body" font-size="40" fill="${prussian}">A journal of measured work in AI engineering.</text>
 
   <rect x="102" y="396" width="720" height="1" fill="${prussian}" opacity="0.55"/>
   <rect x="102" y="408" width="720" height="1" fill="${prussian}" opacity="0.35"/>
 
-  <text x="102" y="468" class="mono" font-size="24" letter-spacing="1" fill="${dim}">VOL. I · EST. JUNE 2026 · BANGALORE</text>
-  <text x="102" y="512" class="mono" font-size="22" letter-spacing="1" fill="${prussian}">blog.neuromancer.in</text>
+  <text x="102" y="468" class="mono" font-size="24" letter-spacing="1" fill="${dim}">VOL. I · EST. JUNE 2026 · blog.neuromancer.in</text>
 </svg>`;
 
 await sharp(Buffer.from(svg)).png().toFile(out);

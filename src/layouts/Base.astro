@@ -93,18 +93,15 @@ const navItems = [
         <div class="double-rule" aria-hidden="true"></div>
         <div class="masthead-row">
           <a class="wordmark" href="/" aria-label="Rahul Naidu home">Rahul Naidu</a>
-          <span class="seal" aria-hidden="true">
-            <Icon name="seal" />
-          </span>
         </div>
         {
           isHome ? (
             <>
               <p class="dek">A journal of measured work in AI engineering.</p>
-              <p class="dateline">VOL. I · EST. JUNE 2026 · BANGALORE</p>
+              <p class="dateline">VOL. I · EST. JUNE 2026</p>
             </>
           ) : (
-            <p class="dateline">VOL. I · {compactCrumb} · BANGALORE</p>
+            <p class="dateline">VOL. I · {compactCrumb}</p>
           )
         }
         <div class="double-rule" aria-hidden="true"></div>
