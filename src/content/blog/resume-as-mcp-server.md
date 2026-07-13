@@ -5,6 +5,8 @@ pubDate: 2026-06-22
 tags: ["mcp", "model-context-protocol", "agents", "hiring", "open-source", "security"]
 draft: false
 repo: https://github.com/rnaidu-parallel/neuromancer-mcp
+margin_note: "A résumé published as a remote MCP server so a company's agent can query work, assess fit, and reach out."
+plate: { kind: network, params: { spokes: 8 } }
 ---
 
 A few weeks ago I interviewed with a company whose application flow was not a form. They handed me an MCP server and told me to connect to it from Claude Code. One command later, my agent was doing the applying. It asked the server what the role required, assembled the material, and submitted on my behalf. I was still the human in the loop, but I was no longer the person filling boxes.

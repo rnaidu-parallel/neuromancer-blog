@@ -6,6 +6,18 @@ tags: ["ai-engineering", "prompt-caching", "kv-cache", "openrouter", "cost", "ev
 draft: false
 repo: https://github.com/rnaidu-parallel/prompt-cache-economics
 demo: https://cache.neuromancer.in
+margin_note: "A changing timestamp in the prompt prefix gives 0% OpenAI cache hit and a 25% higher Anthropic bill."
+plate: { kind: bars, params: { groups: [ { label: "PREFIX", values: [0, 25] }, { label: "TAIL", values: [-82, -68] } ] } }
+reader_margin:
+  - "Claim: moving one volatile timestamp from prefix to tail changes the whole cache bill."
+  - "Measured run: six turns, same workload, same information, only placement changed."
+  - "Reported result: OpenAI naive saves 0%; Anthropic naive costs 25% more than no caching."
+  - "Discipline: stable deployment text first, per-session context next, current turn last."
+sidenotes:
+  - anchor: "at every layer."
+    text: "In this post, KV cache means the stored key and value vectors computed during prefill, reused so a later request can skip recomputing the same stable prefix."
+  - anchor: "where the timestamp goes."
+    text: "The post pins the run date to 2026-06-09, through OpenRouter, using OpenAI gpt-5.4 and Anthropic claude-sonnet-4.6 with reasoning turned off."
 ---
 
 Here is a line that looks completely harmless at the top of a system prompt:

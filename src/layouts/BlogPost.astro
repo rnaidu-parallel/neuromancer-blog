@@ -1,56 +1,188 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
+import { getFigNumber, renderPlateSvg } from '../lib/plates';
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  allPosts: CollectionEntry<'blog'>[];
 }
 
-const { post } = Astro.props;
+const { post, allPosts } = Astro.props;
 const { title, description, pubDate, updatedDate, tags, repo, demo, image } = post.data;
+const slug = post.id;
+const fig = getFigNumber(allPosts, post);
+const plate = renderPlateSvg(slug, {
+  large: true,
+  plate: post.data.plate,
+  title: `Cyanotype frontispiece for ${slug}`,
+});
 
-const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+// Same read-time basis used by the entry list.
+const READ_TIME_WPM = 225;
+const formatDate = (date: Date) => date.toISOString().slice(0, 10);
+const readTime = (body: string) => {
+  const words =
+    body
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .match(/\b[\w'-]+\b/g)?.length ?? 0;
+  return Math.max(1, Math.ceil(words / READ_TIME_WPM));
+};
+
+const displayUrl = (href: string) => {
+  const url = new URL(href);
+  return `${url.hostname}${url.pathname === '/' ? '' : url.pathname}`.replace(/\/$/, '');
+};
+
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+
+const ensureAttribute = (tag: string, name: string, value: string) =>
+  new RegExp(`\\s${name}=`, 'i').test(tag) ? tag : tag.replace(/>$/, ` ${name}="${value}">`);
+
+const normalizeTableHeaders = (html: string) =>
+  html.replace(/<table\b[\s\S]*?<\/table>/gi, (table) =>
+    table
+      .replace(/<thead\b[\s\S]*?<\/thead>/i, (thead) =>
+        thead.replace(/<(td|th)\b([^>]*)>([\s\S]*?)<\/\1>/gi, (_cell, _tag, attrs, body) =>
+          ensureAttribute(`<th${attrs}>`, 'scope', 'col') + body + '</th>'
+        )
+      )
+      .replace(/<tbody\b[\s\S]*?<\/tbody>/i, (tbody) =>
+        tbody.replace(/<tr\b[\s\S]*?<\/tr>/gi, (row) => {
+          if (/<th\b/i.test(row)) return row;
+          return row.replace(/<td\b([^>]*)>([\s\S]*?)<\/td>/i, (_cell, attrs, body) =>
+            ensureAttribute(`<th${attrs}>`, 'scope', 'row') + body + '</th>'
+          );
+        })
+      )
+  );
+
+const renderedContent = await Astro.slots.render('default');
+const unanchoredSidenotes: { number: number; html: string }[] = [];
+const anchoredSidenotes: { number: number; html: string }[] = [];
+let sidenoteSearchFrom = 0;
+
+const contentWithSidenotes = (post.data.sidenotes ?? []).reduce((html, sidenote, index) => {
+  const number = index + 1;
+  const offset = html.indexOf(sidenote.anchor, sidenoteSearchFrom);
+  const safeText = escapeHtml(sidenote.text);
+
+  if (offset === -1) {
+    unanchoredSidenotes.push({ number, html: safeText });
+    return html;
+  }
+
+  anchoredSidenotes.push({ number, html: safeText });
+  const marker = `<button class="note-ref" type="button" aria-expanded="false" aria-controls="inline-note-${number}" data-note-ref="${number}">${number}</button><span class="inline-note" id="inline-note-${number}"><strong>${number}.</strong> ${safeText}</span>`;
+  const insertAt = offset + sidenote.anchor.length;
+  sidenoteSearchFrom = insertAt + marker.length;
+  return `${html.slice(0, insertAt)}${marker}${html.slice(insertAt)}`;
+}, renderedContent);
+
+const contentHtml = normalizeTableHeaders(contentWithSidenotes);
 ---
 
-<Base title={`${title} · blackwall`} description={description} type="article" image={image}>
-  <article>
-    <header class="post-header reveal">
-      <time class="post-date" datetime={pubDate.toISOString()}>
-        {fmt(pubDate)}
-        {updatedDate && <span> · updated {fmt(updatedDate)}</span>}
-      </time>
-      <h1>{title}</h1>
-      <p class="post-desc">{description}</p>
+<Base title={`${title} · Rahul Naidu`} description={description} type="article" image={image} wide>
+  <div
+    class:list={[
+      'post-layout',
       {
-        tags.length > 0 && (
-          <div class="post-tags">
-            {tags.map((tag) => (
-              <span>{tag}</span>
-            ))}
-          </div>
-        )
-      }
-      {
-        (demo || repo) && (
-          <div class="callouts">
-            {demo && (
-              <a class="demo-callout" href={demo}>
-                ▸ play with it — the live demo
-              </a>
-            )}
-            {repo && (
-              <a class="repo-callout" href={repo}>
-                ▸ reproduce it yourself — the repo
-              </a>
-            )}
-          </div>
-        )
-      }
-    </header>
+        'post-layout--with-margin':
+          (post.data.reader_margin?.length ?? 0) > 0 ||
+          unanchoredSidenotes.length > 0 ||
+          anchoredSidenotes.length > 0,
+      },
+    ]}
+  >
+    <article class="post-article">
+      <header class="post-head reveal" style="--i: 1">
+        <figure class="frontispiece">
+          <div class="plate" set:html={plate} />
+          <figcaption class="caption">
+            <span class="fig-label">Fig. {fig}</span>
+            <span> — {slug}</span>
+          </figcaption>
+        </figure>
+        <h1 class="post-title">{title}</h1>
+        <p class="post-desc">{description}</p>
+        <div class="post-dateline" aria-label="Entry dateline">
+          <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+          {updatedDate && <span>updated {formatDate(updatedDate)}</span>}
+          <span>{readTime(post.body)} MIN</span>
+          {tags.map((tag) => <span>{tag}</span>)}
+          {repo && <a href={repo}>repo: {displayUrl(repo)}</a>}
+          {demo && <a href={demo}>demo: {displayUrl(demo)}</a>}
+        </div>
+      </header>
 
-    <div class="prose reveal">
-      <slot />
-    </div>
-  </article>
+      <div class="article-body prose reveal" style="--i: 2" set:html={contentHtml} />
+    </article>
+
+    {
+      ((post.data.reader_margin?.length ?? 0) > 0 ||
+        unanchoredSidenotes.length > 0 ||
+        anchoredSidenotes.length > 0) && (
+        <aside class="marginalia post-margin reveal" style="--i: 3" aria-label="Reader's margin">
+          <h2>READER'S MARGIN</h2>
+          {post.data.reader_margin?.map((note) => <p class="margin-note">{note}</p>)}
+          {unanchoredSidenotes.map((note) => (
+            <p class="margin-note">
+              <span>{note.number}.</span>
+              <Fragment set:html={note.html} />
+            </p>
+          ))}
+          {anchoredSidenotes.map((note) => (
+            <p class="margin-note sidenote" data-note-id={note.number}>
+              <span>{note.number}.</span>
+              <Fragment set:html={note.html} />
+            </p>
+          ))}
+        </aside>
+      )
+    }
+  </div>
+
+  <script is:inline>
+    document.querySelectorAll('.note-ref').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('aria-controls');
+        const inline = id ? document.getElementById(id) : null;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        inline?.classList.toggle('is-open', !expanded);
+      });
+    });
+
+    const placeSidenotes = () => {
+      const margin = document.querySelector('.post-margin');
+      if (!margin || !matchMedia('(min-width: 1100px)').matches) {
+        margin?.classList.remove('is-positioned');
+        margin?.style.removeProperty('min-height');
+        margin?.querySelectorAll('.sidenote[data-note-id]').forEach((note) => {
+          note.style.removeProperty('--note-top');
+        });
+        return;
+      }
+      const top = margin.getBoundingClientRect().top + scrollY;
+      margin.classList.add('is-positioned');
+      const staticItems = [...margin.children].filter((item) => !item.classList.contains('sidenote'));
+      let bottom = staticItems.reduce((max, item) => Math.max(max, item.getBoundingClientRect().bottom + scrollY - top), 0);
+      margin.querySelectorAll('.sidenote[data-note-id]').forEach((note) => {
+        const ref = document.querySelector(`[data-note-ref="${note.dataset.noteId}"]`);
+        const target = ref ? ref.getBoundingClientRect().top + scrollY - top : 0;
+        const y = Math.max(target, bottom + 24);
+        note.style.setProperty('--note-top', `${y}px`);
+        bottom = y + note.getBoundingClientRect().height;
+      });
+      margin.style.minHeight = `${bottom}px`;
+    };
+    addEventListener('load', placeSidenotes);
+    addEventListener('resize', placeSidenotes);
+  </script>
 </Base>

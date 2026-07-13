@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { renderPlateSvg } from '../lib/plates';
 
 // Each card = one public concept repo. Cards link to the repo once it's
 // public; until then they render as non-links. New entries land here the
@@ -34,27 +35,61 @@ const projects = [
 ---
 
 <Base
-  title="Projects · blackwall"
+  title="Projects · Rahul Naidu"
   description="Public concept repos: production LLM lessons, each backed by a reproducible eval."
   wide
 >
-  <header class="post-header reveal">
+  <header class="register-header reveal">
+    <p class="section-heading">APPARATUS</p>
     <h1>Projects</h1>
     <p class="post-desc">What I'm building in public.</p>
   </header>
 
-  <div class="card-grid reveal">
+  <div class="apparatus-list reveal">
     {
-      projects.map((p) =>
+      projects.map((p, index) =>
         p.href ? (
-          <a class="card" href={p.href}>
-            <h3>{p.title}</h3>
-            <p>{p.desc}</p>
+          <a class="apparatus-entry" href={p.href} style={`--i: ${index + 2}`}>
+            <div class="apparatus-plate">
+              <div
+                class="plate"
+                set:html={renderPlateSvg(p.title, {
+                  plate: undefined,
+                  title: `Cyanotype apparatus plate for ${p.title}`,
+                })}
+              />
+              <p class="caption">
+                <span class="fig-label">App. {String(index + 1).padStart(2, '0')}</span>
+                <span> · {p.title}</span>
+              </p>
+            </div>
+            <div class="apparatus-body">
+              <p class="entry-kicker">PUBLIC RECORD</p>
+              <h2>{p.title}</h2>
+              <p>{p.desc}</p>
+              <span class="apparatus-link">open record</span>
+            </div>
           </a>
         ) : (
-          <div class="card">
-            <h3>{p.title}</h3>
-            <p>{p.desc}</p>
+          <div class="apparatus-entry" style={`--i: ${index + 2}`}>
+            <div class="apparatus-plate">
+              <div
+                class="plate"
+                set:html={renderPlateSvg(p.title, {
+                  plate: undefined,
+                  title: `Cyanotype apparatus plate for ${p.title}`,
+                })}
+              />
+              <p class="caption">
+                <span class="fig-label">App. {String(index + 1).padStart(2, '0')}</span>
+                <span> · {p.title}</span>
+              </p>
+            </div>
+            <div class="apparatus-body">
+              <p class="entry-kicker">PUBLIC RECORD</p>
+              <h2>{p.title}</h2>
+              <p>{p.desc}</p>
+            </div>
           </div>
         )
       )

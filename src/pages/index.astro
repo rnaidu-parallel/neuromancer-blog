@@ -1,135 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
+import EntryList from '../components/EntryList.astro';
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
-import Scriptorium from '../components/Scriptorium.astro';
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5);
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts
+  .slice()
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <Base
-  title="blackwall — Rahul Naidu Siriporam, AI engineer"
-  description="AI engineer. I ship agents to production and publish the evidence — reproducible evals, real failure modes, honest tradeoffs."
+  title="Rahul Naidu · AI engineering journal"
+  description="A journal of measured work in AI engineering: production lessons, reproducible evals, real failure modes, and honest tradeoffs."
+  masthead="home"
+  wide
 >
-  <section class="hero">
-    <div class="hero__body">
-      <h1 class="reveal"><span class="typed">Rahul Naidu Siriporam</span><span class="cursor" aria-hidden="true"></span></h1>
-      <p class="tagline reveal">
-        AI engineer. I ship agents to production and <strong>publish the evidence</strong>.
-      </p>
-      <p class="hero-aside reveal">// just another net runner wandering the streets of night city</p>
-      <p class="hero-meta reveal">
-        agents · context engineering · rag · tool-calling reliability · evals · prompt caching ·
-        model routing · agent memory
-      </p>
-    </div>
-  </section>
-
-  <h2 class="rule rule--tight" aria-label="Connect via agent">agent access</h2>
-  <aside class="mcp">
-    <p class="mcp-intro">
-      Add my <abbr title="Model Context Protocol">MCP</abbr> server to your agent — then ask it
-      about my work, or have it reach out.
-    </p>
-    <div class="mcp-cmds">
-      <div class="mcp-cmd">
-        <span class="mcp-label">claude code</span>
-        <div class="mcp-row">
-          <code class="mcp-code"
-            >claude mcp add --transport http rahul https://mcp.neuromancer.in/api/mcp</code
-          >
-          <button type="button" class="mcp-copy" data-copy-cmd aria-label="Copy Claude Code command">
-            <svg class="icon-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
-            <svg class="icon-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-          </button>
-        </div>
-      </div>
-      <div class="mcp-cmd">
-        <span class="mcp-label">codex</span>
-        <div class="mcp-row">
-          <code class="mcp-code">codex mcp add rahul --url https://mcp.neuromancer.in/api/mcp</code>
-          <button type="button" class="mcp-copy" data-copy-cmd aria-label="Copy Codex command">
-            <svg class="icon-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
-            <svg class="icon-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-    <p class="mcp-hint">
-      Any other agent: point an MCP client at
-      <code class="mcp-inline">https://mcp.neuromancer.in/api/mcp</code> over streamable HTTP.
-    </p>
-  </aside>
-
-  <Scriptorium />
-
-  <h2 class="rule" aria-label="Contact">uplink</h2>
-  <aside class="uplink" id="uplink" role="button" tabindex="0" aria-expanded="false" aria-label="Open contact channel">
-    <span class="uplink-line">
-      $ open_uplink --to rahul<span class="uplink-caret caret-cmd" aria-hidden="true">█</span>
-    </span>
-    <span class="uplink-line uplink-out">
-      <span class="uplink-status">&gt; channel established</span><span
-        class="uplink-caret"
-        aria-hidden="true">█</span
-      >
-    </span>
-    <a class="uplink-addr uplink-out" href="mailto:rahulnaidusiriporam@gmail.com"
-      >rahulnaidusiriporam@gmail.com</a
-    >
-  </aside>
-
-  <h2 class="rule" aria-label="Latest posts">latest</h2>
-  <PostList posts={posts} />
-
-  <script is:inline>
-    // erupt the Blackwall background from an element's centre
-    const fireBurst = (el) => {
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      window.dispatchEvent(
-        new CustomEvent('blackwall:burst', {
-          detail: {
-            x: (r.left + r.width / 2) / window.innerWidth,
-            y: 1 - (r.top + r.height / 2) / window.innerHeight,
-          },
-        })
-      );
-    };
-
-    // the moment the name finishes typing -> dramatic burst from the name
-    const typed = document.querySelector('.hero h1 .typed');
-    typed?.addEventListener('animationend', () => fireBurst(typed));
-
-    const uplink = document.getElementById('uplink');
-    const openUplink = () => {
-      uplink.classList.add('open');
-      uplink.setAttribute('aria-expanded', 'true');
-      fireBurst(uplink);
-    };
-    uplink?.addEventListener('click', openUplink);
-    uplink?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') openUplink();
-    });
-
-    // copy each MCP install command, with a burst from the clicked button
-    document.querySelectorAll('[data-copy-cmd]').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const code = btn.closest('.mcp-row')?.querySelector('.mcp-code');
-        if (!code) return;
-        try {
-          await navigator.clipboard.writeText((code.textContent || '').trim());
-          btn.classList.add('copied');
-          fireBurst(btn);
-          setTimeout(() => {
-            btn.classList.remove('copied');
-          }, 1400);
-        } catch (err) {
-          /* clipboard blocked; the command is selectable as a fallback */
-        }
-      });
-    });
-  </script>
+  <EntryList posts={posts} allPosts={allPosts} />
 </Base>
