@@ -1,8 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" fill="#FCFBF7"/>
-  <rect x="5" y="6" width="22" height="1" fill="#17456E"/>
-  <rect x="5" y="9" width="22" height="1" fill="#17456E"/>
-  <rect x="5" y="22" width="22" height="1" fill="#17456E"/>
-  <rect x="5" y="25" width="22" height="1" fill="#17456E"/>
-  <rect x="11" y="14" width="5" height="5" fill="#C63D2F"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="4" fill="#0a0e12"/>
+  <text x="5" y="23" font-family="ui-monospace, Menlo, monospace" font-size="17" font-weight="700" fill="#edf3f6">b</text>
+  <rect x="17" y="9" width="8" height="15" fill="#a8173a"/>
 </svg>

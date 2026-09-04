@@ -1,158 +1,100 @@
 ---
 import Base from '../layouts/Base.astro';
-
-const mcpCommands = [
-  {
-    label: 'claude code',
-    command: 'claude mcp add --transport http rahul https://mcp.neuromancer.in/api/mcp',
-    copyLabel: 'Copy Claude Code command',
-  },
-  {
-    label: 'codex',
-    command: 'codex mcp add rahul --url https://mcp.neuromancer.in/api/mcp',
-    copyLabel: 'Copy Codex command',
-  },
-];
 ---
 
 <Base
-  title="About · Rahul Naidu"
+  title="About · blackwall"
   description="Rahul, AI engineer building production LLM systems: agent loops, context engineering, RAG, tool-calling reliability, evals, prompt caching, model routing, agent memory."
-  wide
 >
-  <header class="register-header reveal">
-    <p class="section-heading">COLOPHON</p>
+  <header class="post-header reveal">
     <h1>About</h1>
     <p class="post-desc">Production war stories, with the numbers attached.</p>
   </header>
 
-  <div class="colophon-register reveal">
-    <section class="colophon-section">
-      <p class="colophon-label">Bio</p>
-      <p>
+  <div class="prose reveal">
+    <p>
       I'm Rahul, an AI engineer with five years of building products end to end: backend
       platforms, data pipelines, and the LLM systems on top. Everything I ship has to survive
       real users, real latency budgets, and real bills. Most of what I learned doing that isn't
       written down anywhere, so this site is me writing it down.
-      </p>
-    </section>
+    </p>
 
-    <section class="colophon-section">
-      <p class="colophon-label">What I've shipped</p>
-      <ul>
-        <li>
-          <strong>An agent platform that loads skills on demand.</strong> Tools stay locked until
-          the agent reads the playbook for the job in front of it. Runs in production inside a
-          WhatsApp-native assistant.
-        </li>
-        <li>
-          <strong>A glucose forecaster</strong> built on a Transformer-LSTM hybrid, predicting
-          spikes two hours ahead with 94% of predictions inside Clarke Zone A. The LLM extracts
-          features. It doesn't tell fortunes.
-        </li>
-        <li>
-          <strong>A vision pipeline for meal logging</strong> that handles ten thousand photos a
-          day at a p90 of about six seconds, and lifted in-app logging from 24% to 38%.
-        </li>
-        <li>
-          <strong>An agent, judge, and extractor eval pipeline</strong> that scores production
-          traces with compaction in the picture, because a benchmark that ignores how context
-          degrades is measuring the wrong thing.
-        </li>
-        <li>
-          <strong>Prompt-cache engineering</strong> across multiple providers. A single timestamp
-          in a system prompt once bought us a 0% cache hit rate. Once.
-        </li>
-        <li><strong>A Text-to-SQL agent</strong> with deterministic scoring. No AI in the math.</li>
-      </ul>
-    </section>
+    <h2>What I've shipped</h2>
+    <ul>
+      <li>
+        <strong>An agent platform that loads skills on demand.</strong> Tools stay locked until
+        the agent reads the playbook for the job in front of it. Runs in production inside a
+        WhatsApp-native assistant.
+      </li>
+      <li>
+        <strong>A glucose forecaster</strong> built on a Transformer-LSTM hybrid, predicting
+        spikes two hours ahead with 94% of predictions inside Clarke Zone A. The LLM extracts
+        features. It doesn't tell fortunes.
+      </li>
+      <li>
+        <strong>A vision pipeline for meal logging</strong> that handles ten thousand photos a
+        day at a p90 of about six seconds, and lifted in-app logging from 24% to 38%.
+      </li>
+      <li>
+        <strong>An agent, judge, and extractor eval pipeline</strong> that scores production
+        traces with compaction in the picture, because a benchmark that ignores how context
+        degrades is measuring the wrong thing.
+      </li>
+      <li>
+        <strong>Prompt-cache engineering</strong> across multiple providers. A single timestamp
+        in a system prompt once bought us a 0% cache hit rate. Once.
+      </li>
+      <li><strong>A Text-to-SQL agent</strong> with deterministic scoring. No AI in the math.</li>
+    </ul>
 
-    <section class="colophon-section">
-      <p class="colophon-label">Where I've worked</p>
-      <h2>Canvas AI <span class="when">2022 to present</span></h2>
-      <p>
-        Founding software engineer. First engineer on an agentic investing suite, a consumer-health
-        assistant serving thousands of users a day on a streaming chat backend, and a WhatsApp
-        business-intelligence agent running NL-to-SQL at better than 90% accuracy. Built the
-        company's analytics engine from scratch: funnels, retention, cohorts, and segmentation on a
-        dynamic query builder over ClickHouse, fed by a real-time event SDK and eight data
-        connectors. I also built the eval and observability tooling the other products lean on,
-        plus the infrastructure underneath: Kafka streaming, Airflow orchestration, Dockerized
-        microservices on AWS, full CI/CD. The unglamorous parts that keep the glamorous parts
-        honest.
-      </p>
-      <h2>Quantile Analytics <span class="when">2021 to 2022</span></h2>
-      <p>
-        Quantitative analyst. Automated rebalancing-signal pipelines across twenty-plus global
-        indices, and an NLP parser for SEC filings that replaced a lot of manual spreadsheet
-        archaeology.
-      </p>
-    </section>
+    <h2>Where I've worked</h2>
+    <h3>Canvas AI <span class="when">2022 to present</span></h3>
+    <p>
+      Founding software engineer. First engineer on an agentic investing suite, a consumer-health
+      assistant serving thousands of users a day on a streaming chat backend, and a WhatsApp
+      business-intelligence agent running NL-to-SQL at better than 90% accuracy. Built the
+      company's analytics engine from scratch: funnels, retention, cohorts, and segmentation on a
+      dynamic query builder over ClickHouse, fed by a real-time event SDK and eight data
+      connectors. I also built the eval and observability tooling the other products lean on,
+      plus the infrastructure underneath: Kafka streaming, Airflow orchestration, Dockerized
+      microservices on AWS, full CI/CD. The unglamorous parts that keep the glamorous parts
+      honest.
+    </p>
+    <h3>Quantile Analytics <span class="when">2021 to 2022</span></h3>
+    <p>
+      Quantitative analyst. Automated rebalancing-signal pipelines across twenty-plus global
+      indices, and an NLP parser for SEC filings that replaced a lot of manual spreadsheet
+      archaeology.
+    </p>
 
-    <section class="colophon-section">
-      <p class="colophon-label">Education</p>
-      <p>B.Tech from IIT Indore, class of 2021.</p>
-      <p>
-        The fascination started there. Somewhere in the middle of my degree I took Andrew Ng's
-        machine learning course on Coursera and fell hard for it, less for the demos than for the
-        math underneath. Backpropagation, gradient descent, the perceptron. One assignment had me
-        coding a CNN, and I still remember the small shock of watching it learn.
-      </p>
-    </section>
+    <h2>Education</h2>
+    <p>B.Tech from IIT Indore, class of 2021.</p>
+    <p>
+      The fascination started there. Somewhere in the middle of my degree I took Andrew Ng's
+      machine learning course on Coursera and fell hard for it, less for the demos than for the
+      math underneath. Backpropagation, gradient descent, the perceptron. One assignment had me
+      coding a CNN, and I still remember the small shock of watching it learn.
+    </p>
 
-    <section class="colophon-section">
-      <p class="colophon-label">Receipts</p>
-      <ul>
-        <li>JEE Main 2017: rank 3,289 out of 1.2 million. Top 0.27%. JEE Advanced: rank 4,473.</li>
-        <li>CAT 2021: 99.19 percentile. Chose to keep building instead.</li>
-        <li>Bronze medal, BitGrit data science contest, Inter-IIT Tech Meet 2019.</li>
-      </ul>
-    </section>
+    <h2>Receipts</h2>
+    <ul>
+      <li>JEE Main 2017: rank 3,289 out of 1.2 million. Top 0.27%. JEE Advanced: rank 4,473.</li>
+      <li>CAT 2021: 99.19 percentile. Chose to keep building instead.</li>
+      <li>Bronze medal, BitGrit data science contest, Inter-IIT Tech Meet 2019.</li>
+    </ul>
 
-    <section class="mcp-apparatus" aria-labelledby="agent-access-heading">
-      <p class="colophon-label" id="agent-access-heading">Agent access</p>
-      <p class="mcp-intro">
-        Add my <abbr title="Model Context Protocol">MCP</abbr> server to your agent, then ask it
-        about my work, or have it reach out.
-      </p>
-      <div class="mcp-cmds">
-        {
-          mcpCommands.map((item) => (
-            <div class="mcp-cmd">
-              <span class="mcp-label">{item.label}</span>
-              <div class="mcp-row">
-                <code class="mcp-code">{item.command}</code>
-                <button type="button" class="mcp-copy" data-copy-cmd aria-label={item.copyLabel}>
-                  <span class="copy-mark" aria-hidden="true">COPY</span>
-                  <span class="check-mark" aria-hidden="true">DONE</span>
-                </button>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-      <p class="mcp-hint">
-        Any other agent: point an MCP client at
-        <code class="mcp-inline">https://mcp.neuromancer.in/api/mcp</code> over streamable HTTP.
-      </p>
-    </section>
+    <h2>What this site is</h2>
+    <p>
+      A place to share my work, what I'm learning, and the occasional war story. When a post
+      makes a claim, there's a repo attached that backs it up.
+    </p>
+    <p>
+      The name comes from Cyberpunk 2077. The <em>Blackwall</em> is the firewall that keeps rogue
+      AIs away from everyone else's net, which felt about right for someone who ships agents for
+      a living. The domain is a Gibson reference. Agent memory is the problem I care most about,
+      and <em>Neuromancer</em> got there forty years early.
+    </p>
+
+    <!-- LinkedIn + X links land in the footer once handles are settled -->
   </div>
-
-  <script is:inline>
-    document.querySelectorAll('[data-copy-cmd]').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const code = btn.closest('.mcp-row')?.querySelector('.mcp-code');
-        if (!code) return;
-        try {
-          await navigator.clipboard.writeText((code.textContent || '').trim());
-          btn.classList.add('copied');
-          setTimeout(() => {
-            btn.classList.remove('copied');
-          }, 1400);
-        } catch (err) {
-          /* clipboard blocked; the command is selectable as a fallback */
-        }
-      });
-    });
-  </script>
 </Base>
