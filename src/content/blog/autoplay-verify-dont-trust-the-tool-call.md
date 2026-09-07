@@ -1,6 +1,6 @@
 ---
-title: "A tool call succeeding is not proof anything happened"
-description: "My AI agent's own wasted-decision metric read 7.5% on a two-hour Stardew Valley run. After I fixed how it classified a stalled loop, the same run read 80.8%. Why the harness now verifies against game state, never the model's account of its own actions."
+title: "My AI agent's wasted-decision metric said 7.5%. The real number was 80.8%"
+description: "A two-hour Stardew Valley run stalled on a mailbox for 74 minutes. The harness's own dashboard called that 7.5% wasted, because it trusted the tool call instead of the game state. Why the harness now verifies against state, never the model's account of its own actions."
 pubDate: 2026-09-07
 tags: ["ai-engineering", "agents", "game-agent", "structured-state", "openrouter"]
 draft: false
