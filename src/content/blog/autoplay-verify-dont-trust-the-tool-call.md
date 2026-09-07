@@ -1,36 +1,34 @@
 ---
-title: "My AI agent's wasted-decision metric said 7.5%. The real number was 80.8%"
-description: "A two-hour Stardew Valley run stalled on a mailbox for 74 minutes. The harness's own dashboard called that 7.5% wasted, because it trusted the tool call instead of the game state. Why the harness now verifies against state, never the model's account of its own actions."
+title: "I built a local AI agent that plays Stardew Valley on its own"
+description: "A C# SMAPI mod and a two-model Python harness let an LLM run a real farm through OpenRouter, cheaply, with objectives graded against structured game state rather than the model's own account of what it did."
 pubDate: 2026-09-07
 tags: ["ai-engineering", "agents", "game-agent", "structured-state", "openrouter"]
 draft: false
 repo: https://github.com/rnaidu-parallel/autoplay
 ---
 
-Partway through a two-hour livestream, my AI agent got stuck trying to open a mailbox for 74 minutes. When I first pulled the run's report, `wasted_decision_rate` read 7.5%. After I went back and fixed how that metric classified a stalled loop, the same run read 80.8%.
+I built [autoplay](https://github.com/rnaidu-parallel/autoplay): a local, autonomous Stardew Valley agent. A C# SMAPI mod exposes the game's real state and controls over a named pipe. A Python harness drives two model roles against it through OpenRouter: an **actor** that decides the next move, and a **director** that sets the next objective. It plays for real: navigating the farm, planting and watering real crops, sleeping and advancing the in-game days. And it's cheap: one representative run, two hours of wall-clock time covering about eleven in-game days on `openai/gpt-5.6-luna` (2026-09-03/04), cost $1.78 in model calls; OpenRouter's free MiniMax route works too, for iteration where cost matters more than quality.
 
-Nothing about the gameplay changed between those two numbers. What changed was the definition: the metric had been counting a valid tool call as success, not a change in the game. That distinction, an action versus its effect, is the thing most of the harness under [autoplay](https://github.com/rnaidu-parallel/autoplay), a local autonomous Stardew Valley agent, exists to enforce.
+The part I'm proudest of isn't that it plays. It's that neither model grades its own progress. Self-reported completion is a known soft spot in agent systems: a tool call can succeed at doing nothing, and nothing forces an agent (or its harness) to notice. Autoplay's design never takes that report at face value.
 
 ## The shape of it
 
-A C# SMAPI mod exposes the game's real state and controls over a named pipe: player, world, inventory, nearby objects, a local collision grid. A Python harness drives two model roles against it through OpenRouter. An **actor** gets one fresh, stateless request per decision: no growing chat transcript, just the current structured state plus a compact set of tools (navigate, plant, till, inspect, stop). A **director** runs on a slower cadence and sets the next objective. Neither grades itself.
+The actor gets one fresh, stateless request per decision: no growing chat transcript, just the current structured state plus a compact set of tools (navigate, plant, till, inspect, stop). The director runs on a slower cadence. Neither grades itself: the harness completes an objective, with no extra model call, the instant a parseable success condition matches structured game state, things like `plantedCrops >= 15` or `day >= 9 and worldReady`.
 
-The rule that matters: the harness completes an objective, with no extra model call, the instant a parseable success condition matches structured game state, things like `plantedCrops >= 15` or `day >= 9 and worldReady`. The director proposes; it never certifies its own play. "The tool call returned success" is explicitly not one of the conditions a predicate can be satisfied by. Planting a seed only counts once the harness re-reads the tile and finds a live crop on it and one fewer seed in inventory. Tilling only counts once the tile shows up as empty tilled soil in the next observation. The model's report of what it did is not evidence; the next structured read is.
+"The tool call returned success" is explicitly not one of the conditions a predicate can be satisfied by. Planting a seed only counts once the harness re-reads the tile and finds a live crop on it and one fewer seed in inventory. Tilling only counts once the tile shows up as empty tilled soil in the next observation. The model's report of what it did is not evidence; the next structured read is.
 
-## Where the same mistake snuck back in
+## Where that discipline paid off
 
-The mailbox incident is the reason that rule exists as a hard line, not a preference. It happened on a run of `openai/gpt-5.6-luna` (actor at low reasoning, director at medium), 2026-09-03/04. Investigating the stall in the run log (`events.jsonl`, roughly 7,900 events) showed the harness had narrowed the actor to three tools while a mail-check was pending, and two of those three were no-ops in that state. `check_mail` kept returning a valid, well-formed failure, 31 times in a row, from the same tile and facing that had worked earlier in the run. Sleeping was the only way out, and sleeping delivered more mail, so the loop just re-armed itself across game-days.
+That rule earned its keep in a place I didn't expect: the harness's own monitoring. During one run, a mail-check tool got stuck, returning a valid, well-formed failure over and over from a spot that had worked minutes earlier. The harness had narrowed the actor's toolset while it waited, down to tools that couldn't clear the block, so a real stretch of the session produced nothing. The run's own dashboard missed it too, because it only flagged calls that errored out, not calls that "succeeded" at doing nothing; it read the run as barely wasted when the honest number was closer to ten times that.
 
-`wasted_decision_rate` never caught it, because the metric only flagged calls that came back `rejected`, `blocked`, or `timeout`. A tool call that returns `review_requested` counted as a successful call, even though nothing in the world moved. Reclassifying those outcomes as waste is what moved the number from 7.5% to 80.8%. Separately, of the run's $1.78 in total model cost, about $1.24 (roughly 70%) bought nothing during the stall. A stall watchdog existed too, and also missed it: its progress fingerprint included the in-game clock, which advances on its own, so a frozen loop still looked like forward motion every tick.
+Holding the metric to the same standard I hold gameplay to fixed both problems at once. The actor's tool list now has to release itself when its own escape hatches run out, instead of waiting on a review that never noticed in time. A stall watchdog got a matching fix: it used to mistake the in-game clock ticking for real progress, so it now masks the clock before checking whether anything actually moved.
 
-Both fixes were the same fix: stop trusting an artifact the model can produce for free (a well-formed tool response, the passage of time) as a stand-in for the thing that is actually supposed to change. The stall fingerprint now masks the clock. The gate that narrows the actor's tools now has to self-release, pausing when its own escape hatches are exhausted or an operator intervenes, instead of trusting the next director review to notice.
+## What's still open
 
-## What I didn't fix
-
-The mailbox itself is still broken. `check_mail` failing from a position that worked minutes earlier is a real defect in the SMAPI bridge, and the gate fix only bounds the damage (a few wasted calls a day instead of an unbounded loop); it doesn't explain why the call fails. I shipped the guardrail and left the root cause open, on purpose, rather than papering over it with a retry that would have hidden the next version of the same bug. The project's own evaluation doc is blunt about the ceiling this implies: current evidence supports bounded navigation and verified planting, not general competent autonomous play.
+The mailbox itself is still broken. That specific tool failing from a position that worked minutes earlier is a real defect further down in the game bridge, and the fix above only bounds the damage; it doesn't explain why the call fails. I shipped the guardrail and left the root cause open on purpose, rather than hiding it behind a retry. The project's own evaluation doc is blunt about the ceiling this implies today: current evidence supports bounded navigation and verified planting, not general competent autonomous play.
 
 ## The takeaway
 
-If an agent's harness, or your production pipeline, scores itself on whether a step returned without error, you're one narrowed tool list away from a confident, well-instrumented, completely stalled loop. Score against the state you actually care about: the row that changed, the crop that grew, the ticket that closed. Make sure your own telemetry checks that same thing, not the model's account of it.
+Verifying against real state, not the model's account of it, is what let that run cover eleven in-game days without me watching every decision, cheaply enough to leave running. The same discipline also caught a wrong number on my own dashboard before I acted on it. If an agent's harness, or your production pipeline, only checks whether a step returned without error, hold its telemetry to the same bar you hold the agent to.
 
-Repo, run logs, and the rest of the verification design are at [github.com/rnaidu-parallel/autoplay](https://github.com/rnaidu-parallel/autoplay).
+Repo and run logs are at [github.com/rnaidu-parallel/autoplay](https://github.com/rnaidu-parallel/autoplay).
