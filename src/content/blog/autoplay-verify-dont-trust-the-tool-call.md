@@ -11,6 +11,14 @@ I built [autoplay](https://github.com/rnaidu-parallel/autoplay): a local, autono
 
 The part I'm proudest of isn't that it plays. It's that neither model grades its own progress. Self-reported completion is a known soft spot in agent systems: a tool call can succeed at doing nothing, and nothing forces an agent (or its harness) to notice. Autoplay's design never takes that report at face value.
 
+<figure style="margin: 2.5rem auto; max-width: 820px; text-align: center;">
+  <video controls playsinline preload="metadata" poster="/autoplay-stream-clip-poster.jpg" style="width: 100%; border-radius: 14px; display: block;">
+    <source src="/autoplay-stream-clip.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <figcaption style="font-size: 0.85rem; opacity: 0.65; margin-top: 0.6rem;">A clip from a live run, OBS overlay showing the plan, current objective, and session cost in real time. Watch it live on <a href="https://www.twitch.tv/can_we_reverse_entropy">Twitch</a> or <a href="https://kick.com/can-we-reverse-entropy">Kick</a>.</figcaption>
+</figure>
+
 ## The shape of it
 
 The actor gets one fresh, stateless request per decision: no growing chat transcript, just the current structured state plus a compact set of tools (navigate, plant, till, inspect, stop). The director runs on a slower cadence. Neither grades itself: the harness completes an objective, with no extra model call, the instant a parseable success condition matches structured game state, things like `plantedCrops >= 15` or `day >= 9 and worldReady`.
