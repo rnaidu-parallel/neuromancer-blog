@@ -535,12 +535,6 @@ html.fonts-ready .hero h1 .typed {
   font-weight: 600;
 }
 
-.hero-bio code {
-  font-family: var(--font-mono);
-  font-size: 0.85em;
-  color: var(--text-dim);
-}
-
 /* ---------- jarvis: try-out card ---------- */
 
 .jarvis {
