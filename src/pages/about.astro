@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 
 <Base
   title="About · blackwall"
-  description="Rahul, AI engineer building production LLM systems: agent loops, context engineering, RAG, tool-calling reliability, evals, prompt caching, model routing, agent memory."
+  description="Rahul, AI engineer leading tech and engineering at OneStop AI, building Jarvis/IRA, an agentic AI investing platform on WhatsApp, web, and mobile."
 >
   <header class="post-header reveal">
     <h1>About</h1>
@@ -13,18 +13,25 @@ import Base from '../layouts/Base.astro';
 
   <div class="prose reveal">
     <p>
-      I'm Rahul, an AI engineer with five years of building products end to end: backend
-      platforms, data pipelines, and the LLM systems on top. Everything I ship has to survive
-      real users, real latency budgets, and real bills. Most of what I learned doing that isn't
-      written down anywhere, so this site is me writing it down.
+      I'm Rahul, a founding AI engineer with five-plus years in software, the last three shipping
+      agentic LLM systems to production. Today I lead tech and engineering at
+      <strong>OneStop AI</strong>, where I architect and own <strong>Jarvis/IRA</strong> end to
+      end: an agentic AI investing platform on WhatsApp, web, and iOS/Android. The code lives in
+      the <code>One-Stop-AI/osai_jango</code> repo. Everything I ship has to survive real users,
+      real latency budgets, and real bills. Most of what I learned doing that isn't written down
+      anywhere, so this site is me writing it down.
     </p>
 
     <h2>What I've shipped</h2>
     <ul>
       <li>
-        <strong>An agent platform that loads skills on demand.</strong> Tools stay locked until
-        the agent reads the playbook for the job in front of it. Runs in production inside a
-        WhatsApp-native assistant.
+        <strong>Jarvis, end to end.</strong> A Python/FastAPI agent backend with durable
+        execution on SQS FIFO, a PostgreSQL inbox/outbox, and a singleton job scheduler on AWS
+        ECS; cross-provider model routing with per-task backups, prompt caching, LLM-as-judge
+        evals, and latency/cost telemetry; CI/CD with staging-on-merge and OTA plus store mobile
+        releases. On top of it, a structured user memory card, mid-session context compaction
+        and cross-session summaries, on-demand skills, multimodal portfolio intake (CSV, image,
+        PDF), WhatsApp-to-app handoffs, and scheduled proactive investment alerts.
       </li>
       <li>
         <strong>A glucose forecaster</strong> built on a Transformer-LSTM hybrid, predicting
@@ -48,17 +55,25 @@ import Base from '../layouts/Base.astro';
     </ul>
 
     <h2>Where I've worked</h2>
-    <h3>Canvas AI <span class="when">2022 to present</span></h3>
+    <h3>OneStop AI <span class="when">Sep 2026 to present</span></h3>
     <p>
-      Founding software engineer. First engineer on an agentic investing suite, a consumer-health
-      assistant serving thousands of users a day on a streaming chat backend, and a WhatsApp
-      business-intelligence agent running NL-to-SQL at better than 90% accuracy. Built the
-      company's analytics engine from scratch: funnels, retention, cohorts, and segmentation on a
-      dynamic query builder over ClickHouse, fed by a real-time event SDK and eight data
-      connectors. I also built the eval and observability tooling the other products lean on,
-      plus the infrastructure underneath: Kafka streaming, Airflow orchestration, Dockerized
-      microservices on AWS, full CI/CD. The unglamorous parts that keep the glamorous parts
-      honest.
+      Founding software engineer, leading tech and engineering. Lead engineer for Jarvis/IRA,
+      the agentic AI investing platform described above, owned end to end with AI-accelerated
+      development.
+    </p>
+    <h3>Canvas AI <span class="when">Nov 2023 to Aug 2026</span></h3>
+    <p>
+      Led three engineers delivering SugarFit's diabetes-care AI assistant for thousands of daily
+      users: RAG to GraphRAG to QLoRA fine-tuning, a single agent to a multi-agent system, meal
+      planning, symptom triage, CGM analysis, lab-report extraction, and a clinician copilot.
+      Also built Apperture's datamart workbooks, eight-plus data connectors with CDC via Debezium
+      and Kafka, and a WhatsApp Text-to-SQL BI agent at better than 90% NL-to-SQL accuracy.
+    </p>
+    <h3>Parallel <span class="when">Jul 2022 to Oct 2023</span></h3>
+    <p>
+      Product analyst, then backend engineer on Apperture's founding team. Built the B2B
+      product-analytics platform's ClickHouse engines for funnels, retention, cohorts,
+      segmentation, and custom metrics.
     </p>
     <h3>Quantile Analytics <span class="when">2021 to 2022</span></h3>
     <p>

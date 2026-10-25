@@ -521,6 +521,82 @@ html.fonts-ready .hero h1 .typed {
   color: var(--accent);
 }
 
+.hero-bio {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 60ch;
+  margin: 1.25rem 0 0;
+  text-shadow: 0 1px 16px var(--bg), 0 0 3px var(--bg);
+}
+
+.hero-bio strong {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.hero-bio code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--text-dim);
+}
+
+/* ---------- jarvis: try-out card ---------- */
+
+.jarvis {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg-raised) 45%, transparent);
+  backdrop-filter: blur(12px) saturate(125%);
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
+}
+
+.jarvis-intro {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.jarvis-intro strong {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.jarvis-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.jarvis-links a {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 0.8rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.jarvis-links a:hover,
+.jarvis-links a:focus-visible {
+  color: var(--text-bright);
+  border-color: var(--accent);
+  box-shadow: 0 0 14px var(--accent-soft);
+}
+
 /* ---------- scriptorium (manuscript passage, text wraps the dragon) ---------- */
 
 .scriptorium {

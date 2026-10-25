@@ -11,13 +11,20 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 
 <Base
   title="blackwall — Rahul Naidu Siriporam, AI engineer"
-  description="AI engineer. I ship agents to production and publish the evidence — reproducible evals, real failure modes, honest tradeoffs."
+  description="AI engineer leading tech at OneStop AI, building Jarvis, an agentic AI investing platform on WhatsApp, web, and mobile. I ship agents to production and publish the evidence."
 >
   <section class="hero">
     <div class="hero__body">
       <h1 class="reveal"><span class="typed">Rahul Naidu Siriporam</span><span class="cursor" aria-hidden="true"></span></h1>
       <p class="tagline reveal">
         AI engineer. I ship agents to production and <strong>publish the evidence</strong>.
+      </p>
+      <p class="hero-bio reveal">
+        Leading tech and engineering at <strong>OneStop AI</strong>, where I architect and own
+        <strong>Jarvis/IRA</strong> end to end: an agentic AI investing platform on WhatsApp, web,
+        and iOS/Android (the <code>One-Stop-AI/osai_jango</code> repo). Before that I led three
+        engineers at Canvas AI on SugarFit's diabetes-care assistant, and was on Apperture's
+        founding team at Parallel.
       </p>
       <p class="hero-aside reveal">// just another net runner wandering the streets of night city</p>
       <p class="hero-meta reveal">
@@ -27,7 +34,22 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </section>
 
-  <h2 class="rule rule--tight" aria-label="Connect via agent">agent access</h2>
+  <h2 class="rule rule--tight" aria-label="Jarvis">jarvis</h2>
+  <aside class="jarvis">
+    <p class="jarvis-intro">
+      <strong>Jarvis</strong> is an agentic AI investing companion I build at OneStop AI. It
+      lives where you already are: WhatsApp, the web, and iOS/Android. Ask it about a stock,
+      hand it your portfolio as a CSV, image, or PDF, and it remembers you across sessions.
+    </p>
+    <ul class="jarvis-links">
+      <li><a href="https://testflight.apple.com/join/9xkceKXX">ios testflight</a></li>
+      <li><a href="https://play.google.com/store/apps/details?id=ai.onestop.jarvis.dev">google play</a></li>
+      <li><a href="https://wa.me/18885278470">whatsapp</a></li>
+      <li><a href="https://app.onestopai.ai">web app</a></li>
+    </ul>
+  </aside>
+
+  <h2 class="rule" aria-label="Connect via agent">agent access</h2>
   <aside class="mcp">
     <p class="mcp-intro">
       Add my <abbr title="Model Context Protocol">MCP</abbr> server to your agent — then ask it
