@@ -577,7 +577,9 @@ html.fonts-ready .hero h1 .typed {
 }
 
 .jarvis-links a {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -588,6 +590,12 @@ html.fonts-ready .hero h1 .typed {
   padding: 0.5rem 0.8rem;
   text-decoration: none;
   transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.jarvis-links svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
 }
 
 .jarvis-links a:hover,
